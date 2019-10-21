@@ -1,6 +1,4 @@
 # perpetual-learning
-neas.dev 
+Blog and Presentation hub for neas.dev 
 
-[Test](./posts/test.md)
-[Test2](./posts/test2.md)
-[Test3](./posts/test3.md)
+[Websockets](./ios-sockets/README.md)
