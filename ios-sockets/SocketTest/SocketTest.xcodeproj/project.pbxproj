@@ -64,16 +64,13 @@
 		6830574C234777B000EAA4B6 /* SocketTest */ = {
 			isa = PBXGroup;
 			children = (
-				6830574D234777B000EAA4B6 /* AppDelegate.swift */,
-				6830574F234777B000EAA4B6 /* SceneDelegate.swift */,
-				68305751234777B000EAA4B6 /* ContentView.swift */,
-				6877D29C2347A77E00058909 /* Model.swift */,
-				6877D29E2347A7AD00058909 /* Message.swift */,
-				6877D29A2347A28100058909 /* NativeWebSocket.swift */,
-				683057612347850E00EAA4B6 /* KeyboardResponder.swift */,
 				68305753234777B200EAA4B6 /* Assets.xcassets */,
-				68305758234777B200EAA4B6 /* LaunchScreen.storyboard */,
 				6830575B234777B200EAA4B6 /* Info.plist */,
+				6851386A2360D78600854E0D /* App */,
+				685138672360D6E000854E0D /* Networking */,
+				685138662360D6D300854E0D /* Views */,
+				685138692360D74900854E0D /* Models */,
+				685138682360D73200854E0D /* Responders */,
 				68305755234777B200EAA4B6 /* Preview Content */,
 			);
 			path = SocketTest;
@@ -85,6 +82,49 @@
 				68305756234777B200EAA4B6 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		685138662360D6D300854E0D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				68305751234777B000EAA4B6 /* ContentView.swift */,
+				6877D29E2347A7AD00058909 /* Message.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		685138672360D6E000854E0D /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				6877D29A2347A28100058909 /* NativeWebSocket.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		685138682360D73200854E0D /* Responders */ = {
+			isa = PBXGroup;
+			children = (
+				683057612347850E00EAA4B6 /* KeyboardResponder.swift */,
+			);
+			path = Responders;
+			sourceTree = "<group>";
+		};
+		685138692360D74900854E0D /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				6877D29C2347A77E00058909 /* Model.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		6851386A2360D78600854E0D /* App */ = {
+			isa = PBXGroup;
+			children = (
+				6830574D234777B000EAA4B6 /* AppDelegate.swift */,
+				68305758234777B200EAA4B6 /* LaunchScreen.storyboard */,
+				6830574F234777B000EAA4B6 /* SceneDelegate.swift */,
+			);
+			path = App;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

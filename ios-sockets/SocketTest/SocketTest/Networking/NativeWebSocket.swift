@@ -10,17 +10,16 @@ import Foundation
 
 // define what WebSocketConnections can do
 protocol WebSocketConnection {
+    func connect()
     func send(text: String)
     func send(data: Data)
-    func connect()
+    func listen()
+    func ping(with: TimeInterval)
     func disconnect()
-    var delegate: WebSocketConnectionDelegate? {
-        get
-        set
-    }
+    var delegate: WebSocketConnectionDelegate? { get set }
 }
 
-protocol WebSocketConnectionDelegate {
+protocol WebSocketConnectionDelegate: class {
     func onConnected(connection: WebSocketConnection)
     func onDisconnected(connection: WebSocketConnection, error: Error?)
     func onError(connection: WebSocketConnection, error: Error)
@@ -29,11 +28,12 @@ protocol WebSocketConnectionDelegate {
 }
 
 extension WebSocketConnectionDelegate {
+    func onMessage(connection: WebSocketConnection, text: String) {}
     func onMessage(connection: WebSocketConnection, data: Data) {}
 }
 
 class NativeWebSocket: NSObject, WebSocketConnection, URLSessionWebSocketDelegate {
-    var delegate: WebSocketConnectionDelegate?
+    weak var delegate: WebSocketConnectionDelegate?
     var webSocketTask: URLSessionWebSocketTask!
     var urlSession: URLSession!
     let delegateQueue = OperationQueue()
@@ -42,9 +42,6 @@ class NativeWebSocket: NSObject, WebSocketConnection, URLSessionWebSocketDelegat
     init(url: URL, autoConnect: Bool = false) {
         super.init()
         urlSession = URLSession(configuration: .default, delegate: self, delegateQueue: delegateQueue)
-//        func webSocketTask(with: URL) -> URLSessionWebSocketTask
-//        func webSocketTask(with: URLRequest) -> URLSessionWebSocketTask
-//        func webSocketTask(with: URL, protocols: [String]) -> URLSessionWebSocketTask
         webSocketTask = urlSession.webSocketTask(with: url)
         if autoConnect {
             connect()
@@ -52,12 +49,14 @@ class NativeWebSocket: NSObject, WebSocketConnection, URLSessionWebSocketDelegat
     }
     
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
-        self.delegate?.onConnected(connection: self)
-        //sendPing()
+        delegate?.onConnected(connection: self)
+        DispatchQueue.main.async { [weak self] in
+            self?.ping()
+        }
     }
     
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
-        self.delegate?.onDisconnected(connection: self, error: nil)
+        delegate?.onDisconnected(connection: self, error: nil)
     }
     
     func connect() {
@@ -66,13 +65,30 @@ class NativeWebSocket: NSObject, WebSocketConnection, URLSessionWebSocketDelegat
         listen()
     }
     
-    func disconnect() {
-        webSocketTask.cancel(with: .normalClosure, reason: nil)
-        pingTimer?.invalidate()
+    func send(text: String) {
+        let textMessage = URLSessionWebSocketTask.Message.string(text)
+        webSocketTask.send(textMessage) { [weak self] error in
+            guard let self = self else { return }
+            if let error = error {
+                self.delegate?.onError(connection: self, error: error)
+            }
+        }
     }
     
+    func send(data: Data) {
+        let dataMessage = URLSessionWebSocketTask.Message.data(data)
+        webSocketTask.send(dataMessage) { [weak self] error in
+            guard let self = self else { return }
+            if let error = error {
+                self.delegate?.onError(connection: self, error: error)
+            }
+        }
+    }
+    
+    // Be aware that if you want to receive messages continuously you need to call this again after you’ve finished receiving a message. One way is to wrap this in a function and call the same function recursively.
     func listen()  {
-        webSocketTask.receive { result in
+        webSocketTask.receive { [weak self] result in
+            guard let self = self else { return }
             switch result {
             case .failure(let error):
                 self.delegate?.onError(connection: self, error: error)
@@ -86,36 +102,23 @@ class NativeWebSocket: NSObject, WebSocketConnection, URLSessionWebSocketDelegat
                     fatalError()
                 }
             }
-            // Be aware that if you want to receive messages continuously you need to call this again after you’ve finished receiving a message. One way is to wrap this in a function and call the same function recursively.
             self.listen()
         }
     }
     
-    func sendPing() {
-        webSocketTask.sendPing { (error) in
-            if let error = error {
-                print("Sending PING failed: \(error)")
-            }
-            self.pingTimer = Timer.scheduledTimer(withTimeInterval: 25.0, repeats: true) { time in
-                self.sendPing()
+    func ping(with frequency: TimeInterval = 25.0) {
+        pingTimer = Timer.scheduledTimer(withTimeInterval: frequency, repeats: true) { [weak self] time in
+            guard let self = self else { return }
+            self.webSocketTask.sendPing { error in
+                if let error = error {
+                    self.delegate?.onError(connection: self, error: error)
+                }
             }
         }
     }
     
-    func send(text: String) {
-        webSocketTask.send(URLSessionWebSocketTask.Message.string(text)) { error in
-            if let error = error {
-                self.delegate?.onError(connection: self, error: error)
-            }
-            print("sent: \(text)")
-        }
-    }
-    
-    func send(data: Data) {
-        webSocketTask.send(URLSessionWebSocketTask.Message.data(data)) { error in
-            if let error = error {
-                self.delegate?.onError(connection: self, error: error)
-            }
-        }
+    func disconnect() {
+        webSocketTask.cancel(with: .normalClosure, reason: nil)
+        pingTimer?.invalidate()
     }
 }
