@@ -107,7 +107,7 @@ class NativeWebSocket: NSObject, WebSocketConnection, URLSessionWebSocketDelegat
     }
     
     func ping(with frequency: TimeInterval = 25.0) {
-        pingTimer = Timer.scheduledTimer(withTimeInterval: frequency, repeats: true) { [weak self] time in
+        pingTimer = Timer.scheduledTimer(withTimeInterval: frequency, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             self.webSocketTask.sendPing { error in
                 if let error = error {
