@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="AllTheNetworks" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="YTG-6a-589">
+                                <rect key="frame" x="20" y="430" width="328" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="fsu-4J-nj7">
+                                <rect key="frame" x="20" y="44" width="374" height="362"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="362" id="Hld-5h-sHm"/>
+                                </constraints>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Uqz-ne-Dvv">
+                                <rect key="frame" x="358" y="432" width="36" height="30"/>
+                                <state key="normal" title="Send"/>
+                                <connections>
+                                    <action selector="sendButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="UoP-Qj-rvh"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BxU-iJ-wOM">
+                                <rect key="frame" x="270" y="508" width="78" height="30"/>
+                                <state key="normal" title="Disconnect"/>
+                                <connections>
+                                    <action selector="disconnect:" destination="BYZ-38-t0r" eventType="touchUpInside" id="gJj-q9-KBR"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KCf-Ym-KhJ">
+                                <rect key="frame" x="60" y="508" width="59" height="30"/>
+                                <state key="normal" title="Connect"/>
+                                <connections>
+                                    <action selector="connect:" destination="BYZ-38-t0r" eventType="touchUpInside" id="TMt-F4-Jmk"/>
+                                    <action selector="disconnect:" destination="BYZ-38-t0r" eventType="touchUpInside" id="KxR-oP-2Eb"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="YTG-6a-589" firstAttribute="top" secondItem="fsu-4J-nj7" secondAttribute="bottom" constant="24" id="7Bz-32-F7g"/>
+                            <constraint firstItem="fsu-4J-nj7" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="8F9-xb-84c"/>
+                            <constraint firstItem="BxU-iJ-wOM" firstAttribute="centerY" secondItem="KCf-Ym-KhJ" secondAttribute="centerY" id="BFd-xA-Zsq"/>
+                            <constraint firstItem="fsu-4J-nj7" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="Pfu-wp-GPF"/>
+                            <constraint firstItem="fsu-4J-nj7" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="ROV-Z7-Bec"/>
+                            <constraint firstItem="KCf-Ym-KhJ" firstAttribute="leading" secondItem="YTG-6a-589" secondAttribute="leading" constant="40" id="SVp-Fl-Ekk"/>
+                            <constraint firstItem="YTG-6a-589" firstAttribute="centerY" secondItem="Uqz-ne-Dvv" secondAttribute="centerY" id="aQ8-sd-Rpl"/>
+                            <constraint firstItem="Uqz-ne-Dvv" firstAttribute="leading" secondItem="YTG-6a-589" secondAttribute="trailing" constant="10" id="gVe-oZ-L9o"/>
+                            <constraint firstItem="BxU-iJ-wOM" firstAttribute="top" secondItem="YTG-6a-589" secondAttribute="bottom" constant="44" id="igI-Kv-BKS"/>
+                            <constraint firstItem="BxU-iJ-wOM" firstAttribute="trailing" secondItem="YTG-6a-589" secondAttribute="trailing" id="s8x-1p-Xd4"/>
+                            <constraint firstItem="Uqz-ne-Dvv" firstAttribute="trailing" secondItem="fsu-4J-nj7" secondAttribute="trailing" id="uOr-tU-VIx"/>
+                            <constraint firstItem="YTG-6a-589" firstAttribute="leading" secondItem="fsu-4J-nj7" secondAttribute="leading" id="zpr-7f-Rju"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                    </view>
+                    <connections>
+                        <outlet property="messageBox" destination="fsu-4J-nj7" id="Lqy-26-2H1"/>
+                        <outlet property="textField" destination="YTG-6a-589" id="RNs-e3-raS"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="137.68115942028987" y="137.94642857142856"/>
+        </scene>
+    </scenes>
+</document>
