@@ -20,7 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		6830574A234777B000EAA4B6 /* SocketTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SocketTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6830574A234777B000EAA4B6 /* SwiftWebSockets.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftWebSockets.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6830574D234777B000EAA4B6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6830574F234777B000EAA4B6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		68305751234777B000EAA4B6 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -48,7 +48,7 @@
 		68305741234777B000EAA4B6 = {
 			isa = PBXGroup;
 			children = (
-				6830574C234777B000EAA4B6 /* SocketTest */,
+				6830574C234777B000EAA4B6 /* SwiftWebSockets */,
 				6830574B234777B000EAA4B6 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -56,16 +56,15 @@
 		6830574B234777B000EAA4B6 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6830574A234777B000EAA4B6 /* SocketTest.app */,
+				6830574A234777B000EAA4B6 /* SwiftWebSockets.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		6830574C234777B000EAA4B6 /* SocketTest */ = {
+		6830574C234777B000EAA4B6 /* SwiftWebSockets */ = {
 			isa = PBXGroup;
 			children = (
 				68305753234777B200EAA4B6 /* Assets.xcassets */,
-				6830575B234777B200EAA4B6 /* Info.plist */,
 				6851386A2360D78600854E0D /* App */,
 				685138672360D6E000854E0D /* Networking */,
 				685138662360D6D300854E0D /* Views */,
@@ -73,7 +72,7 @@
 				685138682360D73200854E0D /* Responders */,
 				68305755234777B200EAA4B6 /* Preview Content */,
 			);
-			path = SocketTest;
+			path = SwiftWebSockets;
 			sourceTree = "<group>";
 		};
 		68305755234777B200EAA4B6 /* Preview Content */ = {
@@ -121,6 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				6830574D234777B000EAA4B6 /* AppDelegate.swift */,
+				6830575B234777B200EAA4B6 /* Info.plist */,
 				68305758234777B200EAA4B6 /* LaunchScreen.storyboard */,
 				6830574F234777B000EAA4B6 /* SceneDelegate.swift */,
 			);
@@ -130,9 +130,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		68305749234777B000EAA4B6 /* SocketTest */ = {
+		68305749234777B000EAA4B6 /* SwiftWebSockets */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6830575E234777B200EAA4B6 /* Build configuration list for PBXNativeTarget "SocketTest" */;
+			buildConfigurationList = 6830575E234777B200EAA4B6 /* Build configuration list for PBXNativeTarget "SwiftWebSockets" */;
 			buildPhases = (
 				68305746234777B000EAA4B6 /* Sources */,
 				68305747234777B000EAA4B6 /* Frameworks */,
@@ -142,9 +142,9 @@
 			);
 			dependencies = (
 			);
-			name = SocketTest;
+			name = SwiftWebSockets;
 			productName = SocketTest;
-			productReference = 6830574A234777B000EAA4B6 /* SocketTest.app */;
+			productReference = 6830574A234777B000EAA4B6 /* SwiftWebSockets.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -162,7 +162,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 68305745234777B000EAA4B6 /* Build configuration list for PBXProject "SocketTest" */;
+			buildConfigurationList = 68305745234777B000EAA4B6 /* Build configuration list for PBXProject "SwiftWebSockets" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -175,7 +175,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				68305749234777B000EAA4B6 /* SocketTest */,
+				68305749234777B000EAA4B6 /* SwiftWebSockets */,
 			);
 		};
 /* End PBXProject section */
@@ -341,16 +341,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"SocketTest/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"SwiftWebSockets/Preview Content\"";
 				DEVELOPMENT_TEAM = 487YN8HM39;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = SocketTest/Info.plist;
+				INFOPLIST_FILE = SwiftWebSockets/App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = neas.lease.SocketTest;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = neas.lease.SwiftWebSockets;
+				PRODUCT_NAME = SwiftWebSockets;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -361,16 +361,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"SocketTest/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"SwiftWebSockets/Preview Content\"";
 				DEVELOPMENT_TEAM = 487YN8HM39;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = SocketTest/Info.plist;
+				INFOPLIST_FILE = SwiftWebSockets/App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = neas.lease.SocketTest;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = neas.lease.SwiftWebSockets;
+				PRODUCT_NAME = SwiftWebSockets;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -379,7 +379,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		68305745234777B000EAA4B6 /* Build configuration list for PBXProject "SocketTest" */ = {
+		68305745234777B000EAA4B6 /* Build configuration list for PBXProject "SwiftWebSockets" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6830575C234777B200EAA4B6 /* Debug */,
@@ -388,7 +388,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6830575E234777B200EAA4B6 /* Build configuration list for PBXNativeTarget "SocketTest" */ = {
+		6830575E234777B200EAA4B6 /* Build configuration list for PBXNativeTarget "SwiftWebSockets" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6830575F234777B200EAA4B6 /* Debug */,
