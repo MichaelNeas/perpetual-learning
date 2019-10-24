@@ -8,7 +8,7 @@ By definition a **socket** is one end of a two-way communication link between tw
 
 When we need to connect to a website like "www.google.com" through a web browser we have two programs running.  Those two programs are Google's web server application and our web browser application located on our machine.  There is actually an ip address and port number mapped to the web address behind "www.google.com" and there is an unique address for our web browser.  Our computers have two sockets created to be able to **transport** information between each other.
 
-People have created tons of different protocols that allow us to communicate in different ways over a network.  Most commonly we hear of **TCP/IP**, which is exactly the protocol set up to communicate between our web browser and google's servers.  An **HTTP** request typically occurs over a TCP connection and this brings us a few large benefits such as guarenteed delivery acknowledgement and error handling.  **UDP**, is another popular protocol where a datagram socket can pass information a bit more light weight but not necessarily guarentee delivery and generally has reduced overhead from standard TCP connections _(At least for the first message passed)_.  There's also the ability to write your own protocol with raw sockets!
+Tons of different protocols have been created that allow us to communicate in different ways over a network.  Most commonly we hear of **TCP/IP**, which is exactly the protocol set up to communicate between our web browser and google's servers.  An **HTTP** request typically occurs over a TCP connection and this brings us a few large benefits such as guarenteed delivery acknowledgement and error handling.  **UDP**, is another popular protocol where a datagram socket can pass information a bit more light weight but not necessarily guarentee delivery and generally has reduced overhead from standard TCP connections _(At least for the first message passed)_.  There's also the ability to write your own protocol with raw sockets!
 
 ## What are WebSockets?
 
@@ -98,6 +98,7 @@ A more thorough implementation using `URLSessionWebSocketDelegate` can be found 
 
 -----
 
+#### But there's more!
 
 ```swift
 import Network
@@ -113,6 +114,9 @@ let websocketConnection = NWConnection(to: endpoint, using: parameters)
 // Create a listener with those parameters (server)
 let websocketListener = try NWListener(using: parameters)
 ```
+
+We now have the ability to go lower level in the Network framework and create our own Swift WebSocket Server or provide more custom tweaks for WebSocket communications.  I'm currently working on an [implementation](https://github.com/MichaelNeas/perpetual-learning/blob/master/ios-sockets/SwiftWebSockets/SwiftWebSockets/Networking/NativeWebSocketServer.swift) based off the Advances in Networking WWDC talk.
+
 
 ## Final Words
 
