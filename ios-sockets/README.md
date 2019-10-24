@@ -5,7 +5,7 @@
 - SwiftWebSockets, A swiftUI chat client with a websocket networking layer
 - StarscreamComparison, A comparison project between native and starscream's api implementation
 - nodesocket, Node websocket server
-- blog post related to the talk
+- [blog post](./SwiftUIWebSockets.md) related to the talk
 
 
 ```swift
