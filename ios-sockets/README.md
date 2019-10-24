@@ -8,7 +8,7 @@
 - blog post related to the talk
 
 
-```
+```swift
 import Foundation
 
 let task = URLSession.shared.webSocketTask(with: URL(string: "wss://websocket.example")!)
