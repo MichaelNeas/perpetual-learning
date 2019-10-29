@@ -5,7 +5,7 @@
 - nodesocket, Node websocket server
 - websockets presentation slides
 - StarscreamComparison, A comparison project between native and starscream's api implementation
-- [blog post](./SwiftUIWebSockets.md) related to the talk
+- [blog post](./SwiftWebSockets.md) related to the talk
 
 
 ```swift

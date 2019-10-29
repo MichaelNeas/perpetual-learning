@@ -1,4 +1,3 @@
-# perpetual-learning
-Blog and Presentation hub for neas.dev 
+## Topics
 
 [Websockets](./ios-sockets/)
