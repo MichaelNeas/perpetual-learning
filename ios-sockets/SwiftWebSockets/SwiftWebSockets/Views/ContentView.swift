@@ -26,7 +26,10 @@ struct ContentView: View {
                     Text("Send")
                 }
             }
-        }.padding().padding(.bottom, keyboard.currentHeight)
+        }.padding()
+        .padding(.bottom, keyboard.currentHeight)
+        .edgesIgnoringSafeArea(.bottom)
+        .animation(.easeOut(duration: 0.16))
     }
     
     func send() {
