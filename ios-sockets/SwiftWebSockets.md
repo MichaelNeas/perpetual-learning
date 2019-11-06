@@ -126,3 +126,7 @@ I have made [a few projects](https://github.com/MichaelNeas/perpetual-learning/t
 - [NWProtocolWebSocket documentation](https://developer.apple.com/documentation/network/nwprotocolwebsocket)
 - [WWDC Advances in Networking, part 1](https://developer.apple.com/videos/play/wwdc2019/712/)
 - [WWDC Advances in Networking, part 2](https://developer.apple.com/videos/play/wwdc2019/713/)
+
+### Editors
+- [Richard Bibeault](https://github.com/Duderichy)
+- Tiffany Pereira
