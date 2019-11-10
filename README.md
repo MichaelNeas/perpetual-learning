@@ -2,4 +2,5 @@
 
 ## Topics
 
+- [Currying](./currying/)
 - [Websockets](./ios-sockets/)
