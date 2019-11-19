@@ -1,5 +1,10 @@
 # Currying - November 24, 2019
 
+# What is Currying?
+
+# Why is it called "currying"?
+
+# What does it look like?
 ## Common Lisp
 ```common-lisp
 (defun curry-me (a b c d e)
@@ -48,3 +53,5 @@ func curryStuff(a: Int, b: Int, c: Int) -> ((Int, Int) -> Int) {
 
 curryStuff(a: 1, b: 2, c: 3)(4, 5)
 ```
+
+# But when would I use it?
