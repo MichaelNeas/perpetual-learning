@@ -110,13 +110,33 @@ let websocketConnection = NWConnection(to: endpoint, using: parameters)
 // Create a listener with those parameters (server)
 let websocketListener = try NWListener(using: parameters)
 ```
+##### or less securely:
 
-We now have the ability to go lower level in the Network framework and create our own Swift WebSocket Server or provide custom client side WebSocket implementations.  I'm currently working on a WebSocket server [implementation](https://github.com/MichaelNeas/perpetual-learning/blob/master/ios-sockets/SwiftWebSockets/SwiftWebSockets/Networking/NativeWebSocketServer.swift) based off the Advances in Networking WWDC talk.
+```swift
+import Network
+// designate a port for the server
+self.port = NWEndpoint.Port(rawValue: port)!
+
+// create general parameters
+parameters = NWParameters(tls: nil)
+parameters.allowLocalEndpointReuse = true
+parameters.includePeerToPeer = true
+
+// create websocket options
+let wsOptions = NWProtocolWebSocket.Options()
+wsOptions.autoReplyPing = true
+parameters.defaultProtocolStack.applicationProtocols.insert(wsOptions, at: 0)
+
+// Listen for incoming websocket connections
+listener = try! NWListener(using: parameters, on: self.port)
+```
+
+We now have the ability to go lower level in the Network framework and create our own Swift WebSocket Server or provide custom client side WebSocket implementations.  Please view my server [implementation](https://github.com/MichaelNeas/perpetual-learning/blob/master/ios-sockets/SwiftWebSockets/SwiftWebSocketServer/SwiftWebSocketServer/SwiftWebSocketServer.swift) based off the Advances in Networking WWDC talk and a wonderful generic TCP Listener found in the credits.
 
 
 ## Final Words
 
-I have made [a few projects](https://github.com/MichaelNeas/perpetual-learning/tree/master/ios-sockets) recently with the new WebSocket API's.  While some of the Apple developer documentation is limited, it is fully usable and I'm excited to keep playing around!  Feel free to borrow my implementation of a [WebSocket wrapper](https://github.com/MichaelNeas/perpetual-learning/blob/master/ios-sockets/SwiftWebSockets/SwiftWebSockets/Networking/NativeWebSocket.swift). Please check out the [comparison between Starscream and Apple's implementation of client side WebSockets](https://github.com/MichaelNeas/perpetual-learning/tree/master/ios-sockets/StarscreamComparison), _(Scarily similar)_.  If you see anything you would like to add, have an issue with, or want to help out in any way, please submit a pull request or issue!
+I have made [a few projects](https://github.com/MichaelNeas/perpetual-learning/tree/master/ios-sockets) recently with the new WebSocket API's.  To see an end to end implementation please open the [WebSocket Workspace](https://github.com/MichaelNeas/perpetual-learning/blob/master/ios-sockets/SwiftWebSocketClientServer.xcworkspace).  While some of the Apple developer documentation is limited, it is fully usable and I'm excited to keep playing around!  Feel free to borrow my implementation of a [WebSocket wrapper](https://github.com/MichaelNeas/perpetual-learning/blob/master/ios-sockets/SwiftWebSockets/SwiftWebSockets/Networking/NativeWebSocket.swift). Please check out the [comparison between Starscream and Apple's implementation of client side WebSockets](https://github.com/MichaelNeas/perpetual-learning/tree/master/ios-sockets/StarscreamComparison), _(Scarily similar)_.  If you see anything you would like to add, have an issue with, or want to help out in any way, please submit a pull request or issue!
 
 
 ### Credits
@@ -126,6 +146,7 @@ I have made [a few projects](https://github.com/MichaelNeas/perpetual-learning/t
 - [NWProtocolWebSocket documentation](https://developer.apple.com/documentation/network/nwprotocolwebsocket)
 - [WWDC Advances in Networking, part 1](https://developer.apple.com/videos/play/wwdc2019/712/)
 - [WWDC Advances in Networking, part 2](https://developer.apple.com/videos/play/wwdc2019/713/)
+- [Generic TCP NWListener](https://rderik.com/blog/building-a-server-client-aplication-using-apple-s-network-framework/)
 
 ### Editors
 - [Richard Bibeault](https://github.com/Duderichy)

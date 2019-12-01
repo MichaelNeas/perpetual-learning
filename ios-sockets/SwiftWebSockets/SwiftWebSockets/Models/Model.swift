@@ -43,4 +43,12 @@ class Model: ObservableObject, WebSocketConnectionDelegate {
             }
         }
     }
+    
+    func onMessage(connection: WebSocketConnection, data: Data) {
+        if let message = String(data: data, encoding: .utf8), messages.last?.message != message {
+            DispatchQueue.main.async {
+                self.messages.append(Message(message: message, me: false))
+            }
+        }
+    }
 }

@@ -50,9 +50,9 @@ class NativeWebSocket: NSObject, WebSocketConnection, URLSessionWebSocketDelegat
     
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
         delegate?.onConnected(connection: self)
-        DispatchQueue.main.async { [weak self] in
-            self?.ping()
-        }
+//        DispatchQueue.main.async { [weak self] in
+//            self?.ping()
+//        }
     }
     
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
