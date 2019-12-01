@@ -16,3 +16,5 @@
 - Run `SwiftWebSocketServer` - _server_
 - Run `SwiftWebSockets` - _client_
 - Enjoy!
+
+![Demo](./socket-demo.gif)
