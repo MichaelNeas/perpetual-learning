@@ -1,4 +1,9 @@
-# Partial Applications & Currying - November 24, 2019
+# Partial Applications & Currying - December 18, 2019
+
+# Key Functional Programming Concepts
+- First class and higher order functions - Functions for everything!
+- Pure Functions: given a function and an input value you will always receive the same output. That is to say there is no external state used in the function.
+- Type Systems: Swift surely is strictly typed!
 
 # What is Currying?
 
@@ -15,47 +20,47 @@ Christopher Strachey coined the term currying in 1967, although he did not inven
 # What does it look like?
 ## Common Lisp
 ```common-lisp
-(defun curry-me (a b c d e)
+(defun add-me (a b c d e)
   (+ a b c d e))
 ​
-(defun curry-stuff (a b c)
-  (lambda (d e) (curry-me a b c d e)))
+(defun partially-apply-stuff (a b c)
+  (lambda (d e) (add-me a b c d e)))
   
-(funcall (curry-stuff 1 2 3) 4 5)
+(funcall (partially-apply-stuff 1 2 3) 4 5)
 ```
 ## JavaScript
 ```javascript
-function curryMe(a, b, c, d, e) {
+function addMe(a, b, c, d, e) {
    return a + b + c + d + e
 }
 
-function curryStuff(a, b, c) {
+function partiallyApplyStuff(a, b, c) {
     return function(d, e) {
-        return curryMe(a, b, c, d, e)
+        return addMe(a, b, c, d, e)
     }
 }
 
-curryStuff(1, 2, 3)(4, 5)
+partiallyApplyStuff(1, 2, 3)(4, 5)
 ```
 
 ## Also JavaScript
 ```javascript
-let curryMe = (a, b, c, d, e) => a + b + c + d + e
+let addMe = (a, b, c, d, e) => a + b + c + d + e
 
-let curryStuff = (a, b, c) => (d, e) => curryMe(a, b, c, d, e)
+let partiallyApplyStuff = (a, b, c) => (d, e) => addMe(a, b, c, d, e)
 
-curryStuff(1, 2, 3)(4, 5)
+partiallyApplyStuff(1, 2, 3)(4, 5)
 ```
 
 ## Swift
 ```swift
-func curryMe(a: Int, b: Int, c: Int, d: Int, e: Int) -> Int {
+func addMe(a: Int, b: Int, c: Int, d: Int, e: Int) -> Int {
     return a + b + c + d + e
 }
 
-func curryStuff(a: Int, b: Int, c: Int) -> ((Int, Int) -> Int) {
+func partiallyApplyStuff(a: Int, b: Int, c: Int) -> ((Int, Int) -> Int) {
     return { (d, e) in
-        return curryMe(a: a, b: b, c: c, d: d, e: e)
+        return addMe(a: a, b: b, c: c, d: d, e: e)
     }
 }
 
@@ -63,6 +68,10 @@ curryStuff(a: 1, b: 2, c: 3)(4, 5)
 ```
 
 # But when would I use it?
+
+# Inheritence vs Composition
+Inheritence is when you design your types around what they are.
+Composition is when you design your types around what they do.
 
 # References
 - [Currying](https://en.wikipedia.org/wiki/Currying)
