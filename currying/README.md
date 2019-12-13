@@ -17,7 +17,7 @@ Partial application is also when you curry a function, and use some, but not all
 # Why is it called "currying"?
 Christopher Strachey coined the term currying in 1967, although he did not invent the underlying concept, he named currying in a computer science context after Haskell Currying.  The ideal of "currying" can be traced back to 1893 in a mathematical context.
 
-# What does it look like?
+# What do partial applications look like?
 ## Common Lisp
 ```common-lisp
 (defun add-me (a b c d e)
@@ -64,7 +64,7 @@ func partiallyApplyStuff(a: Int, b: Int, c: Int) -> ((Int, Int) -> Int) {
     }
 }
 
-curryStuff(a: 1, b: 2, c: 3)(4, 5)
+partiallyApplyStuff(a: 1, b: 2, c: 3)(4, 5)
 ```
 
 # But when would I use it?
