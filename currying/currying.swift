@@ -1,47 +1,97 @@
-// Regular Function
-func puppyFunc(_ name:  String,_ size: String,_ exercise: String) -> String {
-    "\(name) is a \(size) puppy that likes to \(exercise)!"
+//// Regular Function
+func puppy(_ name:  String,_ breed: String,_ activity: String) -> String {
+    "\(name) is a \(breed) that likes to \(activity)!"
 }
 
 // Function Type with a closure expression
-let puppy: ((String, String, String) -> (String)) = { (name, size, exercise) in
-    "\(name) is a \(size) puppy that likes to \(exercise)!"
+let puppy: ((String, String, String) -> (String)) = { (name, breed, activity) in
+    "\(name) is a \(breed) that likes to \(activity)!"
 }
-print(puppy("Otis", "Small", "Fetch"))
+
+//let puppy = { (name: String, breed: String, activity: String) in
+//    "\(name) is a \(breed) that likes to \(activity)!"
+//}
+
+print(puppy("Otis", "BernieDoodle", "Fetch"))
 
 // curry!
 let puppyCurry = { (name: String) in
-    { (size: String) in
-        { (exercise: String) in
-            "\(name) is a \(size) puppy that likes to \(exercise)!"
+    { (breed: String) in
+        { (activity: String) in
+            "\(name) is a \(breed) that likes to \(activity)!"
         }
     }
 }
 
-let pup = puppyCurry("Remi")
-print(pup("Medium")("Jump"))
+func puppy(named: String) -> ((String) -> ((String) -> (String))) {
+    func puppyBreed(_ breed: String) -> ((String) -> (String)) {
+        func puppyActivity(_ activity: String) -> String {
+            "\(named) is a \(breed) that likes to \(activity)!"
+        }
+        return puppyActivity
+    }
+    return puppyBreed
+}
 
-print(puppyCurry("Otis")("Small")("Fetch"))
+//let otisPuppy = puppy(named: "Otis")
+//let otisDoodle = otisPuppy("BernieDoodle")
+//let otisDoodleTheFetchingPuppy = otisDoodle("Fetch")
+//print(otisDoodleTheFetchingPuppy)
+
+let otisPuppy = puppyCurry("Otis")
+let otisBeneseMtDogPuppy = otisPuppy("Bernese Mountain Dog")
+let otisPoodlePuppy = otisPuppy("Poodle")
+let otisMix = otisPuppy("BernieDoodle")
+
+enum OtisActivities: Int, CustomStringConvertible {
+    case sleep
+    case fetch
+    case 😭
+    case 💩
+    case bark
+    case dig
+    case eat
+    case bite
+    case run
+    case jump
+    
+    var description: String {
+        switch self {
+        case .sleep: return "Sleep"
+        case .fetch: return "Fetch"
+        case .😭: return "😭"
+        case .💩: return "💩"
+        case .bark: return "BARK"
+        case .dig: return "Dig"
+        case .eat: return "Eat"
+        case .bite: return "Bite"
+        case .run: return "Run"
+        case .jump: return "Jump"
+        }
+    }
+}
+
+print(otisMix(OtisActivities(rawValue: Int.random(in: 0 ..< 10))?.description ?? "Fetch"))
 
 struct Puppy: CustomStringConvertible {
     let name: String
-    let size: String
-    let exercise: String
+    let breed: String
+    let activity: String
 
     var description: String {
-        "\(name) is a \(size) puppy that likes to \(exercise)!"
+        "\(name) is a \(breed) that likes to \(activity)!"
     }
 }
 
 let puppies = [
-    Puppy(name: "Otis", size: "Small", exercise: "Fetch"),
-    Puppy(name: "Remi", size: "Medium", exercise: "Jump"),
-    Puppy(name: "Ghost", size: "Large", exercise: "Sleep"),
-    Puppy(name: "Charlie", size: "Extra Small", exercise: "Bark"),
-    Puppy(name: "King", size: "Medium", exercise: "Fetch")
+    Puppy(name: "Otis", breed: "BernieDoodle", activity: "Fetch"),
+    Puppy(name: "Remi", breed: "Aussie", activity: "Jump"),
+    Puppy(name: "Ghost", breed: "Doverman", activity: "Sleep"),
+    Puppy(name: "Charlie", breed: "Rotty", activity: "Bark"),
+    Puppy(name: "King", breed: "Golden", activity: "Fetch")
 ]
 
-let does = { (thing: String) in { (puppy: Puppy) in puppy.exercise == thing } }
+let does = { (thing: String) in { (puppy: Puppy) in puppy.activity == thing } }
 
 let fetchers = puppies.filter(does("Fetch"))
 
