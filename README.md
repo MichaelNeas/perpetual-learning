@@ -1,6 +1,4 @@
-# Perpetual Learning
-
-## Topics
+## 2019
 
 - [Currying](./currying/)
 - [Websockets](./ios-sockets/)

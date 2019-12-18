@@ -84,7 +84,7 @@ let MovieAPI = { (baseURL: URL) in
 }
 
 let url = URL(string: "https://api.themoviedb.org/3")!
-let apiKey = "06be028eff04f0991b1d67e9a1da3bf2"
+let apiKey = "somesuperawesomeapikey"
 let handler = { (result: Result<AnyCodableResponse, APIError>) in
     switch result {
     case .success(let response):
@@ -96,5 +96,3 @@ let handler = { (result: Result<AnyCodableResponse, APIError>) in
 let getMovieRequests = MovieAPI(url)(apiKey)(.GET)
 let topRatedMovies = getMovieRequests(.topRated)(nil)
 topRatedMovies(handler)
-
-
