@@ -126,6 +126,10 @@ curryStuff(1)(2)(3)(4)(5)
 This is that classic question I get asked whenever I bring up currying or partial applications in general.
 It may not be intuitive to think of a curried solution for someone coming from an Object Oriented background and it may even be overkill or unneccesary to even think about currying.  Regardless there are some wonderful reasons to use this technique.
 
+### Map, reduce, filter
+### Configuration
+### Composibility
+
 To sum this up there is a ton of value added to any project in terms of composibility and testability.  By using a functional technique like currying we can:
 1. Provide [configuration encapsulation](./apiConfiguration.swift)
 1. [Lazy evaluations](./urlSessionCurry.swift)
