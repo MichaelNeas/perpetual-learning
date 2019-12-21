@@ -6,6 +6,10 @@
 - Pure Functions: given a function and an input value you will always receive the same output. That is to say there is no external state used in the function.
 - Type Systems: Swift surely is strictly typed!
 
+# Inheritence vs Composition
+Inheritence is when you design your types around what they are.
+Composition is when you design your types around what they do.
+
 # What is Currying?
 
 Currying is when a function does not take all of it's arguments up front.  You give a function a single parameters, it returns a function with a single parameter. And this can continue down a chain until you reach a function that returns the value that you want.
@@ -13,7 +17,7 @@ Currying is when a function does not take all of it's arguments up front.  You g
 # What is a Partial Application?
 
 Currying takes exactly 1 input, whereas partial application can take 2 (or more) inputs. Similar to currying it lets us call a function, split it in multiple calls, and provides multiple arguments per-call.
-Partial application is also when you curry a function, and use some, but not all of the resulting functions.
+Partial application is also when you curry a function, and use some, but not all of the resulting functions.  It is a curried chain that is only "partially applied".
 
 # Why is it called "currying"?
 Christopher Strachey coined the term currying in 1967, although he did not invent the underlying concept, he named currying in a computer science context after Haskell Currying.  The ideal of "currying" can be traced back to 1893 in a mathematical context.
@@ -22,7 +26,6 @@ Christopher Strachey coined the term currying in 1967, although he did not inven
 
 Here is how 3 different languages handle currying or partially applying 5 values.  
 Now 5 layers of curried functions might be impractical, especially for summation, but I want to demonstrate the true "magic" behind multiple curried statements and partial applications.
-It is also quite interesting to see syntax similarities.
 
 ## Swift
 ```swift
@@ -127,17 +130,18 @@ This is that classic question I get asked whenever I bring up currying or partia
 It may not be intuitive to think of a curried solution for someone coming from an Object Oriented background and it may even be overkill or unneccesary to even think about currying.  Regardless there are some wonderful reasons to use this technique.
 
 ### Map, reduce, filter
+Just about all modern languages have basic utility functions that come with certain types.  Array's are the best example of this.  Generally array's will have method's like map to take all the values in an array and transform them in some way.  Or filter, which will take a function that filters out or in array contents based on some condition. Or even more powerful, Reduce which will take the array contents and reduce the amount of data to some smaller subset of data, a common use case could be to sum up all the int's in an array.  These functions take some function and apply it over an array.  Currying is incredibly useful for auxillary functions like these!
+
 ### Configuration
+If you have an API and would like to change setup values, currying provides a wonderful way to meet encapsulation with composibility.
+
 ### Composibility
+Which leads into comosibility.  The ability to swap out contents on the fly is what gives so much power to currying.  We are able to store a primed function at any step of the curry and reassign the invocation at any later point in the programs execution.
 
 To sum this up there is a ton of value added to any project in terms of composibility and testability.  By using a functional technique like currying we can:
 1. Provide [configuration encapsulation](./apiConfiguration.swift)
 1. [Lazy evaluations](./urlSessionCurry.swift)
 1. Create [modular and readable higher order functions](./currying.swift)
-
-# Inheritence vs Composition
-Inheritence is when you design your types around what they are.
-Composition is when you design your types around what they do.
 
 # References
 - [My Presentation!](./functionalSwift.key)
