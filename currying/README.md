@@ -4,28 +4,25 @@
 
 - First class and higher order functions - Pass functions around or use them as types
 - Pure Functions: given a function and an input value you will always receive the same output. That is to say there is no external state used in the function.
-- Type Systems: Swift surely is strictly typed!
-
-# Inheritence vs Composition
-Inheritence is when you design your types around what they are.
-Composition is when you design your types around what they do.
+- Type Systems: Swift surely is strictly typed! In strongly typed languages like swift, we know exactly what types we can expect to be returned from any function.
 
 # What is Currying?
 
-Currying is when a function does not take all of it's arguments up front.  You give a function a single parameters, it returns a function with a single parameter. And this can continue down a chain until you reach a function that returns the value that you want.
+Currying is when a function does not take all of it's arguments up front.  You give a function a single parameter and it returns a function with a single parameter. This pattern can continue down the chain until you reach a function that returns the value that you want, with all the previous properties enclosed from before.
 
 # What is a Partial Application?
 
-Currying takes exactly 1 input, whereas partial application can take 2 (or more) inputs. Similar to currying it lets us call a function, split it in multiple calls, and provides multiple arguments per-call.
-Partial application is also when you curry a function, and use some, but not all of the resulting functions.  It is a curried chain that is only "partially applied".
+1. Currying takes exactly 1 input, whereas partial application can take 2 (or more) inputs. Similar to currying it lets us call a function, split it in multiple calls, and provides multiple arguments per-call.
+2. A partial application is also when you curry a function then use some, but not all of the resulting functions.  It is a curried chain that is only "partially applied", waiting for some future input.
 
 # Why is it called "currying"?
+
 Christopher Strachey coined the term currying in 1967, although he did not invent the underlying concept, he named currying in a computer science context after Haskell Currying.  The ideal of "currying" can be traced back to 1893 in a mathematical context.
 
 # What do partially applied and curried functions look like?
 
 Here is how 3 different languages handle currying or partially applying 5 values.  
-Now 5 layers of curried functions might be impractical, especially for summation, but I want to demonstrate the true "magic" behind multiple curried statements and partial applications.
+Now 5 layers of curried functions might be impractical, especially for summation, but I want to demonstrate the true "magic" behind curried statements and partial applications.
 
 ## Swift
 ```swift
@@ -126,22 +123,39 @@ curryStuff(1)(2)(3)(4)(5)
 
 # But when would I use it?
 
-This is that classic question I get asked whenever I bring up currying or partial applications in general.
-It may not be intuitive to think of a curried solution for someone coming from an Object Oriented background and it may even be overkill or unneccesary to even think about currying.  Regardless there are some wonderful reasons to use this technique.
+This is that classic question I get asked whenever I bring up currying or partial applications in general.  Coming from a strictly Object Oriented background, one could certainly believe this technique is impractical, potientially unintuitive, and overkill or unneccesary to even think about currying.  Aside from currying originating in mathematics and surviving over 100 years of inferential arguments, I would argue that there are wonderful reasons to emplore this idealogy in every day use cases.
 
 ### Map, reduce, filter
-Just about all modern languages have basic utility functions that come with certain types.  Array's are the best example of this.  Generally array's will have method's like map to take all the values in an array and transform them in some way.  Or filter, which will take a function that filters out or in array contents based on some condition. Or even more powerful, Reduce which will take the array contents and reduce the amount of data to some smaller subset of data, a common use case could be to sum up all the int's in an array.  These functions take some function and apply it over an array.  Currying is incredibly useful for auxillary functions like these!
+Just about all modern languages have basic utility functions that come with certain types.  Arrays are one of the best examples of this.  Generally speaking, Arrays will have methods like `map` to take all the values in an array and transform them in some way.  `Filter`, which takes a function that filters _out or in_ array contents based on a given conditional. `Reduce` which iterates through the array contents and applies a transformation to create a smaller subset of data.  These functions all take a function as a parameter and apply the given function over the array.  Currying is incredibly useful for auxillary functions like these!
+
+```Swift
+let puppies = [
+    Puppy(name: "Otis", breed: "BernieDoodle", activity: "Fetch"),
+    Puppy(name: "Remi", breed: "Aussie", activity: "Jump"),
+    Puppy(name: "Ghost", breed: "Doverman", activity: "Sleep"),
+    Puppy(name: "Charlie", breed: "Rotty", activity: "Bark"),
+    Puppy(name: "King", breed: "Golden", activity: "Fetch")
+]
+
+let does = { (thing: String) in { (puppy: Puppy) in puppy.activity == thing } }
+
+let fetchers = puppies.filter(does("Fetch"))
+```
 
 ### Configuration
-If you have an API and would like to change setup values, currying provides a wonderful way to meet encapsulation with composibility.
+If you have an API that requires some form of setup.  Whether that be the development environment, api keys, or even access levels, currying provides a wonderful way to meet encapsulation with composibility.  This [configuration encapsulation](./apiConfiguration.swift) allows developers to have the flexibility to easily test api functionality without needing to add in loads of boiler plate or configuration code.
 
 ### Composibility
-Which leads into comosibility.  The ability to swap out contents on the fly is what gives so much power to currying.  We are able to store a primed function at any step of the curry and reassign the invocation at any later point in the programs execution.
+Which leads into comosibility.  The ability to swap out contents on the fly is what gives so much power to currying.  We are able to store a primed function at any step of the curry and reassign the invocation at any later point in the programs execution.  Taking this one step further, we can define our types based on *what they do* rather than *what they are*.  No longer do we have to predict the future with large inheritence trees where subtypes inherit functions they may never execute in their lifetime.
 
-To sum this up there is a ton of value added to any project in terms of composibility and testability.  By using a functional technique like currying we can:
-1. Provide [configuration encapsulation](./apiConfiguration.swift)
+The value added to any project in terms of composibility and testability is essential. By using a functional technique like currying we can:
+1. Provide better [configuration](./apiConfiguration.swift) objects
 1. [Lazy evaluations](./urlSessionCurry.swift)
 1. Create [modular and readable higher order functions](./currying.swift)
+
+And SO much more!!
+
+Please take a look at my presentation slides below to walk through more examples of currying and see more "real world" reasons why you might want to consider adding currying to your toolbelt.
 
 # References
 - [My Presentation!](./functionalSwift.key)
