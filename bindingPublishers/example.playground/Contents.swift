@@ -52,9 +52,20 @@ struct Child: View {
     var body: some View {
         List {
             ForEach(self.things) { thing in
-                Text(thing.description)
+                GrandChild(thing: thing).onReceive(thing.objectWillChange, perform: { thing in
+                    print(thing)
+                })
             }
         }
+    }
+}
+
+struct GrandChild: View {
+    @ObservedObject var thing: Thing
+    
+    var body: some View {
+        thing.name = "five"
+        return Text(thing.description)
     }
 }
 
