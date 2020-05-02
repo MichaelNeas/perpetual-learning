@@ -24,13 +24,25 @@ The standard example looks like this:
 
 ## Website Setup
 
+As of May 1, 2020 apple requires your app site association file to be at the root of your website. So we'll need to create a custom domain name and assign it to our github pages repo.  This carries a $12 yearly cost if you go through domains.google.com which I highly recommend.  Setup instructions are here: [Link to](instructions).  At this point we have to wait for some time to get https certificates approved and registered for our static site. So the last step to do here is drop your app-site-association file in the root directory of your project (insert pic).
+
 ## Validation
+
+We should be all hooked up now to begin the validation step of our universally linked website.  There's a bunch of sites that do this, but I suggest using Apples or Branch.io's validator.  Once that's all set to go we're ready to connect up the iOS app.
 
 ## iOS App
 
+Your iOS app requires you to add a single line addition to link it to the website we just created.  At this if you run your app in the simulator, navigate over to safari, and scroll down (the apple "open" button will be offset from the out of the box setup, we can add a few lines of javascript to always show the open drawer).
+
+On the iOS app itself we can see incoming requests in the AppDelegate.  From there we can parse the arguments and bubble up whatever view we want based on where the user was coming from.
+
 ## Final Words
 
-It is up to the developer to decide how in depth they want to go with universal linking.  With AppStoreConnect containing fields for marketing and support URL's, why not take the time to add in universal links for users to get to your app? The setup can be less than 5 minutes plus some deployment/certificate time to enable universal links.
+If you want to see this all working, I have an application called [Framewerk](framewerk app store).  If you navigate to [Framewerk.app](framewerk.app), you'll see the static site will point you to download the iOS app on the app store.
+
+It is up to the developer to decide how in depth they want to go with universal linking.  With AppStoreConnect containing fields for marketing and support URL's, why not take the time to add in universal links for users to get to your app? The setup can be less than 5 minutes plus some deployment/certificate time to enable universal links.  
+
+This is a quick setup to get our feet in the door with universal links.  We can link to anywhere in our app based on where the user is on the website.  Universal links are a powerful way to allow users multiple platforms to explore your content.
 
 ## Resources
 - [AASA Gist](https://gist.github.com/anhar/6d50c023f442fb2437e1)
