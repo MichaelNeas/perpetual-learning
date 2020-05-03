@@ -3,9 +3,9 @@
 1. Want to set up universal/deep links for your iOS applications?
 2. Don't have the desire, time, or resources to spin up or maintain a full website and server(s)?
 
-With Github pages or other static web service providers, we can still enable universal links for our iOS applications.  This method accomplishes our goal with minimal cost.  In a matter of minutes we can set up a web based landing page or sharable link to quickly distribute your app to new or existing users.  Universal link configurations are capable of incredibly advanced in-app routing and can get your users to parts of your app that they care the most about.
+With Github pages or other static web service providers, we can still enable universal links for our iOS applications.  This method accomplishes our goal with minimal cost.  In a matter of minutes we can set up a web based landing page or sharable link to quickly distribute your app to new or existing users.  For new users, universal link configurations redirect to your application on the app store. If the app is already downloaded we can provide incredibly advanced in-app routing and easily navigate our users to parts of the app that they care the most about.
 
-We can accomplish all of this using 1 repository, if that tickles your fancy.
+This example accomplishes all of this using 1 repository!
 
 ## Universal Links Basics
 
@@ -14,7 +14,7 @@ Enabling universal links requires three main steps:
 2. Add the associated domains entitlement to the iOS app.
 3. Fill out the association file with all the routing you desire using [wildcards and directives](https://developer.apple.com/documentation/uikit/inter-process_communication/allowing_apps_and_websites_to_link_to_your_content/enabling_universal_links#3002228)
 
-You can see grab the example apple-app-site-association file [here](./apple-app-site-association).  
+You can grab an example apple-app-site-association file [here](./apple-app-site-association).  
 
 The basic example to set up universal links looks like this:
 ```
@@ -45,7 +45,11 @@ iOS 12 uses the paths array and is not aware of the appIDs key. If you have mult
 
 ## Website Setup
 
-Today (May 1, 2020) Apple requires your app site association file to be either at the root or in the `/well-known/` directory of your website. So we'll need to create a custom domain name and assign it to our github pages repo to satisfy the fully qualified domain requirement.  I highly recommend using [domains.google.com](domains.google.com/), where you can purchase a $12/year domain of your liking.  There are 3 steps for linking google domains with github pages, instructions are found [here](https://dev.to/brunodrugowick/github-pages-and-google-domains-together-5ded).  At this point we have to wait for the existence of our site to propagate across the web and HTTPS certificates to be approved and registered for our static site. So the last step to do here is drop your app-site-association file in the root directory of your project.  Do not add a filetype to the file and github pages will serve the "content-type" automatically for you.
+My project was already using Github, this allows me to go to the settings of the repository and enable Github Pages.  If you don't know what github pages is, [definitely check it out](https://pages.github.com/)!  Once you flip on the pages switch we can get in to the good stuff.
+
+Today (May 1, 2020) Apple requires your app site association file to be either at the root or in the `/well-known/` directory of your website.  Github pages gives us a domain out of the box, but namespaces our repos with an additional path, (ie. michaelneas.github.io/coolproject). So we'll need to create a custom domain name and assign it to our github pages repo to satisfy the fully qualified domain requirement.  
+
+I highly recommend using [domains.google.com](domains.google.com/), where you can purchase a $12/year domain of your liking.  There are 3 steps for linking google domains with github pages, instructions are found [here](https://dev.to/brunodrugowick/github-pages-and-google-domains-together-5ded).  At this point we have to wait for the existence of our site to propagate across the web and HTTPS certificates to be approved and registered for our static site.  Github will automatically generate a CNAME for you after you enter in your fancy new domain in settings. The last step to do here is drop your app-site-association file in the root directory of your project.  Do not add a filetype to the file and github pages will serve the "content-type" automatically for you.
 
 ![cname and aasa](./aasa-cname.png "CNAME and AASA in root of project")
 
@@ -56,7 +60,7 @@ We should be all hooked up now to begin the validation step of our universally l
 If you navigate to your new website type in `/apple-app-site-association` after the domain and make sure something like this happens:
 ![Proof of aasa](./aasa-browser.png)
 
-There's a bunch of sites that do this, but I suggest using [Apple](https://search.developer.apple.com/appsearch-validation-tool) or [Branch.io's](https://branch.io/resources/aasa-validator/) validator.  Once that's all set to go we're ready to connect up the iOS app.
+There's a ton of sites that do this, but I suggest using [Apple's](https://search.developer.apple.com/appsearch-validation-tool) or [Branch.io's](https://branch.io/resources/aasa-validator/) validator.  Once that's all set to go we're ready to connect up the iOS app.
 
 Validators typically check for these 5 things:
 ![branch validation](./branch-validation.png "Example showing valid aasa")
@@ -67,11 +71,13 @@ At a minimum an iOS app requires the addition of the `applinks` property to a pr
 ![associated domains capability](./associated-domains-capabilities.png)
 ![associated domains entitlements](./associated-domains-entitlement.png)
 
-If we run the app in simulator, navigate over to safari, type in the url we set up before, and scroll down (the apple "open" button will be offset from the out of the box setup, we can add a few lines of javascript to always show the open drawer).
+Without doing anything else, if we run the app in simulator, navigate over to safari, type in the url we set up before, and scroll down (the apple "open" button will be offset from the out of the box setup, we can add a few lines of javascript to always show the open drawer).
 
-On the iOS app itself we can see incoming requests in the AppDelegate.  From there we can parse the arguments and bubble up whatever view we want based on where the user was coming from.
+![Working applink drawer](./applink-drawer)
 
-More specific handling details can be found [here](https://developer.apple.com/documentation/uikit/inter-process_communication/allowing_apps_and_websites_to_link_to_your_content/handling_universal_links)
+On the iOS app itself we can see incoming requests in the `userActivity` method in the AppDelegate. From there we can parse the arguments and bubble up whatever view we want based on where the user was coming from.
+
+More specific handling details for specific platforms can be found [here](https://developer.apple.com/documentation/uikit/inter-process_communication/allowing_apps_and_websites_to_link_to_your_content/handling_universal_links)
 
 ## Final Words
 
