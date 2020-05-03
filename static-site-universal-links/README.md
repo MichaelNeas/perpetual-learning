@@ -63,15 +63,15 @@ Validators typically check for these 5 things:
 
 ## iOS App
 
-At a minimum an iOS app requires the addition of a property to a project in order to link the website we just created.  
+At a minimum an iOS app requires the addition of the `applinks` property to a project in order to link the website we just created.  Start by enable the associated domains capability.  Following that, insert `applinks:url` under `Domains` as seen in the image below.  The entitlements file will be updated automatically for you.
 ![associated domains capability](./associated-domains-capabilities.png)
 ![associated domains entitlements](./associated-domains-entitlement.png)
 
-At this if you run your app in the simulator, navigate over to safari, and scroll down (the apple "open" button will be offset from the out of the box setup, we can add a few lines of javascript to always show the open drawer).
+If we run the app in simulator, navigate over to safari, type in the url we set up before, and scroll down (the apple "open" button will be offset from the out of the box setup, we can add a few lines of javascript to always show the open drawer).
 
 On the iOS app itself we can see incoming requests in the AppDelegate.  From there we can parse the arguments and bubble up whatever view we want based on where the user was coming from.
 
-More handling details can be found [here](https://developer.apple.com/documentation/uikit/inter-process_communication/allowing_apps_and_websites_to_link_to_your_content/handling_universal_links)
+More specific handling details can be found [here](https://developer.apple.com/documentation/uikit/inter-process_communication/allowing_apps_and_websites_to_link_to_your_content/handling_universal_links)
 
 ## Final Words
 
@@ -81,7 +81,9 @@ If you want to see this all working for yourself I have an application called [F
 
 It is up to the developer to decide how in depth they want to go with universal linking.  With AppStoreConnect containing fields for marketing and support URL's, why not take the time to add in universal links for users to get to your app? The setup can be less than 5 minutes plus some deployment/certificate time to enable universal links.  
 
-This is a quick setup to get our feet in the door with universal links.  We can link to anywhere in our app based on where the user is on the website.  Universal links are a powerful way to allow users multiple platforms to explore your content.
+This is a quick setup to get our feet in the door with universal links.  We can link to anywhere in our app based on where the user is on the website.  Universal links are a powerful way to allow users multiple platforms to explore your content.  At this point we also have the option to enable [webcredentials](https://developer.apple.com/documentation/security/shared_web_credentials) to pass secure credentials between our associated domains.
+
+Further more if you're interested in diving in to a website and plan to support more than what Markdown/basic html gives us you can set up a [react based github pages site](https://github.com/gitname/react-gh-pages).  This can give you an expressive router within a static site and perhaps enable a bit more of a dynamic feel to your site.
 
 ## Resources
 - [AASA Gist](https://gist.github.com/anhar/6d50c023f442fb2437e1)
