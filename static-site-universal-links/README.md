@@ -45,17 +45,29 @@ iOS 12 uses the paths array and is not aware of the appIDs key. If you have mult
 
 ## Website Setup
 
-Today (May 1, 2020) Apple requires your app site association file to be either at the root or in the `/well-known/` directory of your website. So we'll need to create a custom domain name and assign it to our github pages repo to satisfy the fully qualified domain requirement.  I highly recommend using [domains.google.com](domains.google.com/), where you can purchase a $12/year domain of your liking.  There are 3 steps for linking google domains with github pages, instructions are found [here](https://dev.to/brunodrugowick/github-pages-and-google-domains-together-5ded).  At this point we have to wait for the existence of our site to propagate across the web and HTTPS certificates to be approved and registered for our static site. So the last step to do here is drop your app-site-association file in the root directory of your project.
+Today (May 1, 2020) Apple requires your app site association file to be either at the root or in the `/well-known/` directory of your website. So we'll need to create a custom domain name and assign it to our github pages repo to satisfy the fully qualified domain requirement.  I highly recommend using [domains.google.com](domains.google.com/), where you can purchase a $12/year domain of your liking.  There are 3 steps for linking google domains with github pages, instructions are found [here](https://dev.to/brunodrugowick/github-pages-and-google-domains-together-5ded).  At this point we have to wait for the existence of our site to propagate across the web and HTTPS certificates to be approved and registered for our static site. So the last step to do here is drop your app-site-association file in the root directory of your project.  Do not add a filetype to the file and github pages will serve the "content-type" automatically for you.
 
-![cname and aasa][./aasa-cname.png]
+![cname and aasa](./aasa-cname.png "CNAME and AASA in root of project")
 
 ## Validation
 
-We should be all hooked up now to begin the validation step of our universally linked website.  There's a bunch of sites that do this, but I suggest using Apples or Branch.io's validator.  Once that's all set to go we're ready to connect up the iOS app.
+We should be all hooked up now to begin the validation step of our universally linked website.  
+
+If you navigate to your new website type in `/apple-app-site-association` after the domain and make sure something like this happens:
+![Proof of aasa](./aasa-browser.png)
+
+There's a bunch of sites that do this, but I suggest using [Apple](https://search.developer.apple.com/appsearch-validation-tool) or [Branch.io's](https://branch.io/resources/aasa-validator/) validator.  Once that's all set to go we're ready to connect up the iOS app.
+
+Validators typically check for these 5 things:
+![branch validation](./branch-validation.png "Example showing valid aasa")
 
 ## iOS App
 
-Your iOS app requires you to add a single line addition to link it to the website we just created.  At this if you run your app in the simulator, navigate over to safari, and scroll down (the apple "open" button will be offset from the out of the box setup, we can add a few lines of javascript to always show the open drawer).
+At a minimum an iOS app requires the addition of a property to a project in order to link the website we just created.  
+![associated domains capability](./associated-domains-capabilities.png)
+![associated domains entitlements](./associated-domains-entitlement.png)
+
+At this if you run your app in the simulator, navigate over to safari, and scroll down (the apple "open" button will be offset from the out of the box setup, we can add a few lines of javascript to always show the open drawer).
 
 On the iOS app itself we can see incoming requests in the AppDelegate.  From there we can parse the arguments and bubble up whatever view we want based on where the user was coming from.
 
@@ -63,7 +75,9 @@ More handling details can be found [here](https://developer.apple.com/documentat
 
 ## Final Words
 
-If you want to see this all working, I have an application called [Framewerk](framewerk app store).  If you navigate to [Framewerk.app](framewerk.app), you'll see the static site will point you to download the iOS app on the app store.
+![All hooked up](./link-example.gif)
+
+If you want to see this all working for yourself I have an application called [Framewerk](https://apps.apple.com/us/app/framewerk/id1496896308).  If you navigate to [Framewerk.app](framewerk.app), you'll see the static site will point you to download the iOS app on the app store.
 
 It is up to the developer to decide how in depth they want to go with universal linking.  With AppStoreConnect containing fields for marketing and support URL's, why not take the time to add in universal links for users to get to your app? The setup can be less than 5 minutes plus some deployment/certificate time to enable universal links.  
 
@@ -76,4 +90,5 @@ This is a quick setup to get our feet in the door with universal links.  We can 
 - [Apple Docs for Universal Links](https://developer.apple.com/documentation/uikit/inter-process_communication/allowing_apps_and_websites_to_link_to_your_content/enabling_universal_links)
 - [Google Domains and Github Pages](https://dev.to/trentyang/how-to-setup-google-domain-for-github-pages-1p58)
 - [Custom Domains with Github Pages](https://help.github.com/en/github/working-with-github-pages/configuring-a-custom-domain-for-your-github-pages-site)
+- [Universal links checklist](https://gist.github.com/andrewrohn/774185e4e15ddcc14f0a1e3c66c943e3)
 - [React Github Pages](https://github.com/gitname/react-gh-pages)
