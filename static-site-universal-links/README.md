@@ -1,17 +1,25 @@
-# Universal Linking with Github Pages
+# Associated Domains with Github Pages
 
 1. Want to set up universal/deep links for your iOS applications?
-2. Don't have the desire, time, or resources to spin up or maintain a website/server?
+2. Don't have the desire, time, or resources to spin up or maintain a full website and server(s)?
 
 With Github pages or other static web service providers, we can still enable universal links for our iOS applications.  This method accomplishes our goal with minimal cost.  In a matter of minutes we can set up a web based landing page or sharable link to quickly distribute your app to new or existing users.  Universal link configurations are capable of incredibly advanced in-app routing and can get your users to parts of your app that they care the most about.
 
 ## Universal Links Basics
 
-The standard example looks like this:
+Enabling universal links requires three main steps:
+1. Add an app-site-association file to a website
+2. Add the associated domains entitlement to the iOS app.
+3. Fill out the association file with all the routing you desire using [wildcards and directives](https://developer.apple.com/documentation/uikit/inter-process_communication/allowing_apps_and_websites_to_link_to_your_content/enabling_universal_links#3002228)
+
+You can see grab the example apple-app-site-association file [here](./apple-app-site-association).  
+
+The basic example to set up universal links looks like this:
 ```
 {
-    "applinks": {
-        "apps": [],
+    "applinks": {   // The key Apple looks for universal linking
+        "apps": [], //  Not used for universal links, but it must be present and set to an empty array
+        // A list of apps handling universal links for your website, along with the specific sections of your website each app handles.
         "details": [
             {
                 "appID": "<TEAM_DEVELOPER_ID>.<BUNDLE_IDENTIFIER>",
@@ -21,6 +29,14 @@ The standard example looks like this:
     }
 }
 ```
+
+`applinks` - 
+`apps` -
+`details` - 
+`appID` - 
+`paths` -
+
+Apple goes into more examples [here](https://developer.apple.com/documentation/uikit/inter-process_communication/allowing_apps_and_websites_to_link_to_your_content/enabling_universal_links)
 
 ## Website Setup
 
@@ -35,6 +51,8 @@ We should be all hooked up now to begin the validation step of our universally l
 Your iOS app requires you to add a single line addition to link it to the website we just created.  At this if you run your app in the simulator, navigate over to safari, and scroll down (the apple "open" button will be offset from the out of the box setup, we can add a few lines of javascript to always show the open drawer).
 
 On the iOS app itself we can see incoming requests in the AppDelegate.  From there we can parse the arguments and bubble up whatever view we want based on where the user was coming from.
+
+More handling details can be found [here](https://developer.apple.com/documentation/uikit/inter-process_communication/allowing_apps_and_websites_to_link_to_your_content/handling_universal_links)
 
 ## Final Words
 
