@@ -5,6 +5,8 @@
 
 With Github pages or other static web service providers, we can still enable universal links for our iOS applications.  This method accomplishes our goal with minimal cost.  In a matter of minutes we can set up a web based landing page or sharable link to quickly distribute your app to new or existing users.  Universal link configurations are capable of incredibly advanced in-app routing and can get your users to parts of your app that they care the most about.
 
+We can accomplish all of this using 1 repository, if that tickles your fancy.
+
 ## Universal Links Basics
 
 Enabling universal links requires three main steps:
@@ -17,9 +19,8 @@ You can see grab the example apple-app-site-association file [here](./apple-app-
 The basic example to set up universal links looks like this:
 ```
 {
-    "applinks": {   // The key Apple looks for universal linking
-        "apps": [], //  Not used for universal links, but it must be present and set to an empty array
-        // A list of apps handling universal links for your website, along with the specific sections of your website each app handles.
+    "applinks": {
+        "apps": [],
         "details": [
             {
                 "appID": "<TEAM_DEVELOPER_ID>.<BUNDLE_IDENTIFIER>",
@@ -29,18 +30,24 @@ The basic example to set up universal links looks like this:
     }
 }
 ```
-
-`applinks` - 
-`apps` -
-`details` - 
-`appID` - 
-`paths` -
+- `applinks`: The key Apple looks for universal linking
+- `apps`: Not used for universal links, but it must be present and set to an empty array for < iOS12
+- `details`: A list of apps handling universal links for your website, along with the specific sections of your website each app handles.
+- `appID`: identifier of the application that will handle the paths, in our case an iOS app
+- `paths`: sections of your website supported by the app specified as an array of path strings, `*` will catch all paths.  The paths list give us control over when we want the "open app" banner to appear on our website. 
 
 Apple goes into more examples [here](https://developer.apple.com/documentation/uikit/inter-process_communication/allowing_apps_and_websites_to_link_to_your_content/enabling_universal_links)
 
+One caveat here is:
+```
+iOS 12 uses the paths array and is not aware of the appIDs key. If you have multiple applications, use the singular appID key and specify a separate details dictionary for each application.
+```
+
 ## Website Setup
 
-As of May 1, 2020 apple requires your app site association file to be at the root of your website. So we'll need to create a custom domain name and assign it to our github pages repo.  This carries a $12 yearly cost if you go through domains.google.com which I highly recommend.  Setup instructions are here: [Link to](instructions).  At this point we have to wait for some time to get https certificates approved and registered for our static site. So the last step to do here is drop your app-site-association file in the root directory of your project (insert pic).
+Today (May 1, 2020) Apple requires your app site association file to be either at the root or in the `/well-known/` directory of your website. So we'll need to create a custom domain name and assign it to our github pages repo to satisfy the fully qualified domain requirement.  I highly recommend using [domains.google.com](domains.google.com/), where you can purchase a $12/year domain of your liking.  There are 3 steps for linking google domains with github pages, instructions are found [here](https://dev.to/brunodrugowick/github-pages-and-google-domains-together-5ded).  At this point we have to wait for the existence of our site to propagate across the web and HTTPS certificates to be approved and registered for our static site. So the last step to do here is drop your app-site-association file in the root directory of your project.
+
+![cname and aasa][./aasa-cname.png]
 
 ## Validation
 
