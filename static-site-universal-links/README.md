@@ -100,6 +100,7 @@ The last step is to drop our app-site-association file in the `/.well-known` dir
 ## Validation
 
 If we navigate to our new website and add the path `/.well-known/apple-app-site-association` after the domain something like this should appear:
+
 ![Proof of aasa](./aasa-browser.png)
 
 There are many sites that validate association files, but commonly suggested validators include [Apple](https://search.developer.apple.com/appsearch-validation-tool) or [Branch.io](https://branch.io/resources/aasa-validator/).  **Some validators may not correctly respond to the new format from the WWDC 2019 additions to association files**
@@ -115,9 +116,9 @@ At a minimum, an application requires the addition of the `applinks` service typ
 ![associated domains capability](./associated-domains-capabilities.png)
 ![associated domains entitlements](./associated-domains-entitlement.png)
 
-The next time the app is installed the device will reach out to the associated site and confirm the association.  If the app is now ran, navigate to Safari, type in the url we set up before, and scroll a little, we will see the Smart App Banner! 
+The next time the app is installed, the device will reach out to the associated site and confirm the association.  If the app is now ran, navigate to Safari, type in the url we set up before, and scroll a little, we will see the Smart App Banner! 
 
-_The "open in app" banner is offset by default, which is why the brief scroll is required to see it.  If interested, a few lines of javascript can be used to auto scroll users when they land on a page_
+_The "open in app" banner is offset by default, which is why a brief scroll is required to see it.  If interested, a few lines of javascript can be used to auto scroll users when they land on a page_
 
 ![Working applink drawer](./applink-drawer.png)
 
@@ -131,13 +132,13 @@ More specific handling details for different platforms can be found [here](https
 
 If you want to see this all working for yourself I vetted this process with an application called [Framewerk](https://apps.apple.com/us/app/framewerk/id1496896308).  If you navigate to [Framewerk.app](framewerk.app), you can see the association file used there.  For iOS 12 and below the setup works flawlessly, but 13 introduces quirkiness.
 
-It is up to us to decide how in depth we want to go with universal linking.  With AppStoreConnect containing fields for marketing and support URL's, why not take the time to add in universal links for users to get to your app easily? This specific setup can be take than 5 minutes plus some additional deployment/certificate processing time to enable universal links.
+It is up to us to decide how in depth we want to go with universal linking.  With AppStoreConnect having fields for our App's marketing and support URL's, why not take the time to add in universal links for users to get to your app easily? This specific setup can be take than 5 minutes plus some additional deployment/certificate processing time to enable universal links.
 
-The example gets our feet wet with universal links.  Universal links are a powerful way to enable users on multiple platforms to explore content.  At this point we also have the option to enable [webcredentials](https://developer.apple.com/documentation/security/shared_web_credentials) to pass secure credentials between our associated domains.
+The example project gets our feet wet with universal links.  Universal links are a powerful way to enable users on multiple platforms to explore content.  At this point we also have the option to enable [webcredentials](https://developer.apple.com/documentation/security/shared_web_credentials) to pass secure credentials between our associated domains.
 
-If you're interested in diving in to web development and plan to support more than what Markdown/basic html gives us you can set up a [react based github pages site](https://github.com/gitname/react-gh-pages).  This can provide an expressive router within a static site and perhaps enable more of a dynamic feel to the site.  The process in the steps above will be exactly the same regardless of how you want to make your website.  Another very popular solution is to use [firebase](https://firebase.google.com/docs/dynamic-links/ios)
+If you're interested in diving in to web development and plan to support more than what Markdown/basic html gives us you can set up a [react based github pages site](https://github.com/gitname/react-gh-pages).  This can provide an expressive router within a static site and perhaps enable more of a dynamic feel to the site.  The process in the steps above will be the same regardless of how you want to make your website.  Another very popular solution is to use [firebase](https://firebase.google.com/docs/dynamic-links/ios) or [branch.io](https://branch.io)
 
-If you'd like a fun exercise, go to one of your favorite sites and check out their association file.  Remember they will only exist in two places, and as of iOS 13+, they will always be in `/.well-known/`.  AASA files can be absolutely massive. (Here is [Youtube's](https://www.youtube.com/apple-app-site-association))
+If you'd like a fun exercise, go to one of your favorite sites and check out their association file.  Remember that they will only exist in two places, and as of iOS 13+, they will always be under `/.well-known/`.  AASA files can be absolutely massive. (Here is [Youtube's](https://www.youtube.com/apple-app-site-association))
 
 ## Helpful Links
 - [AASA Gist](https://gist.github.com/anhar/6d50c023f442fb2437e1)
