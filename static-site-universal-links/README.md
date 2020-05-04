@@ -12,6 +12,8 @@ If you're interested in why Apple officially recommends Universal Links for deep
 TL;DR:
 ![Universal links ftw](./why-use.png)
 
+During [WWDC 2019](https://developer.apple.com/videos/play/wwdc2019/717/), a handful of fundamental changes were presented with [Associated Domains](https://developer.apple.com/documentation/safariservices/supporting_associated_domains_in_your_app)
+
 ## Universal Links Basics
 
 Universal links require three things:
@@ -19,7 +21,7 @@ Universal links require three things:
 2. A valid association file with all routing information desired using [wildcards and directives](https://developer.apple.com/documentation/uikit/inter-process_communication/allowing_apps_and_websites_to_link_to_your_content/enabling_universal_links#3002228) as needed.
 3. The Associated Domains entitlement and capability inside the project itself.
 
-The basic universal link setup looks like this:
+The basic universal link setup for iOS 12 and below looks like this:
 ```
 {
     "applinks": {
@@ -34,16 +36,42 @@ The basic universal link setup looks like this:
 }
 ```
 
+In iOS 13 we have a modified structure.
+```
+{
+    "applinks": {
+        "details": [
+            {
+                "appIDs": [ "<Application Identifier Prefix>.<Bundle Identifier>" ]
+                "components": [{
+                    "/": "/path/*",
+                    "#": "*fragment",
+                    "?": { "param": "?*", "key": "value" },
+                    "exclude": true
+                }]
+            }
+        ]
+    }
+}
+```
+
 #### What are any of these keys? 
-- `applinks`: Says that this site may have linked applications.
-- `apps`: Not used for universal links, but it must be present and set to an empty array.
+- `applinks`: Defines the service type for universal links
+- `apps`: Not used for universal links, but it must be present and set to an empty array for iOS 12/tvOS 12 and below
 - `details`: A list of applications handling the links for a given website, along with the specific sections of the website being handled.
 - `appID`: identifier of the application handling the paths
 - `paths`: sections of the website supported by the linked application.  These paths are specified as an array of qualifying strings, where `*` covers all permutations of a path.  This list gives us control over when we want universal linkage.
+- `appIDs`: an array of app identifiers
+- `components`: The new way to match specific identifiers in a given path, including fragment and query components. If this exists, the `paths` key will be ignored on across all new platform releases.  If we don't specify a component, it will be ignored by default. `exclude` takes the place of the previous `NOT` in new releases. There are good examples at [this point in the WWDC talk](https://developer.apple.com/videos/play/wwdc2019/717/?time=437).
+
+**Note:**
+```
+The prefix may or may not be equal to your team identifier
+```
 
 Apple goes into more expressive examples in [their documentation](https://developer.apple.com/documentation/uikit/inter-process_communication/allowing_apps_and_websites_to_link_to_your_content/enabling_universal_links)
 
-##### One caveat to remember
+##### The important caveat to remember
 
 ```
 iOS 12 uses the paths array and is not aware of the appIDs key. 
@@ -55,7 +83,9 @@ specify a separate details dictionary for each application.
 
 When I started looking at using Github's static site service for universal linking my project was already using Github.  This allowed me to adjust the settings of the repository and enable Github Pages.  If you don't know what Github Pages is, [definitely check it out](https://pages.github.com/)!  Once you turn on Pages we can get to the good stuff.
 
-Apple requires the app site association file to either be at the root or in the `/.well-known/` directory of your website.  Github Pages provides us with a domain out of the box, but namespaces a path from our repository name, (ie. `michaelneas.github.io/somecoolproject`).  Therefore we don't have control over the root path and to satisfy the "fully qualified domain" requirement we'll need to create a custom domain name and assign it to our Pages repo.
+As of WWDC 2019 Apple requires the app site association file always be located in the `/.well-known/` directory of your website.  Previously (iOS 12 and below) Apple supported the existence of this file at the root, but this is now officially deprecated.  To support the well-known directory we need to add `include: [".well-known"]` to our `_config.yml` file that Pages generates.
+
+Github Pages provides a domain out of the box, but namespaces a path from our repository name, (ie. `michaelneas.github.io/somecoolproject`).  Therefore we don't have control over the root path and to satisfy the "fully qualified domain" requirement we'll need to create a custom domain name and assign it to our Pages repo.
 
 I highly recommend using [domains.google.com](domains.google.com/), a domain can cost $12/year.  There are 3 steps for linking Google Domains with Github Pages, instructions are found [here](https://dev.to/brunodrugowick/github-pages-and-google-domains-together-5ded).  
 
@@ -79,11 +109,11 @@ Once that's all set, we're ready to connect the iOS app.
 
 ## Application
 
-At a minimum, an application requires the addition of the `applinks` property inside the Associated Domains capability in order to link the website we just created.  Enable the associated domains capability and insert `applinks:url` under `Domains` as seen in the image below.  The entitlements file will be updated automatically.
+At a minimum, an application requires the addition of the `applinks` service type property inside the Associated Domains capability in order to link the website we just created.  Enable the associated domains capability and insert `applinks:url` under `Domains` as seen in the image below.  The entitlements file will be updated automatically.
 ![associated domains capability](./associated-domains-capabilities.png)
 ![associated domains entitlements](./associated-domains-entitlement.png)
 
-At this point the app knows about the site and the site knows about the app.  If we now run the app, navigate to Safari, type in the url we set up before, and scroll a little, we will see the banner! 
+At this point the next time the app is installed Apple will reach out to the associated site and confirm the association.  If we now run the app, navigate to Safari, type in the url we set up before, and scroll a little, we will see the Smart App Banner! 
 
 _The "open in app" banner is offset by default, which is why the brief scroll is required to see it.  If interested, a few lines of javascript can be used to auto scroll users when they land on a page_
 
@@ -91,13 +121,15 @@ _The "open in app" banner is offset by default, which is why the brief scroll is
 
 In the app itself we can see incoming requests in the `userActivity` method in the `AppDelegate`. From there we can parse the arguments and bubble up whatever views/content we want based on where the user is coming from.
 
-More specific handling details for different platforms can be found [here](https://developer.apple.com/documentation/uikit/inter-process_communication/allowing_apps_and_websites_to_link_to_your_content/handling_universal_links)
+More specific handling details for different platforms can be found [here](https://developer.apple.com/documentation/uikit/inter-process_communication/allowing_apps_and_websites_to_link_to_your_content/handling_universal_links) or [here if you prefer video](https://developer.apple.com/videos/play/wwdc2019/717/?time=766).
 
 ## Final Words
 
 ![All hooked up](./link-example.gif)
 
-If you want to see this all working for yourself I vetted this process with an application called [Framewerk](https://apps.apple.com/us/app/framewerk/id1496896308).  If you navigate to [Framewerk.app](framewerk.app), you can see that the static site will point you to download the iOS app on the app store.
+If you want to see this all working for yourself I vetted this process with an application called [Framewerk](https://apps.apple.com/us/app/framewerk/id1496896308).  If you navigate to [Framewerk.app](framewerk.app), you can see the association file used there.
+
+Please note that as of iOS13 release there has been some inconsistent behavior [noted across the board](https://forums.developer.apple.com/thread/123554).  I can still get universal links working consistently running directly on device, but directing to the app store and app store downloads in general on iOS 13+ have not been reliable.  I will update this post with any new Associated Domain release notes.
 
 It is up to us to decide how in depth we want to go with universal linking.  With AppStoreConnect containing fields for marketing and support URL's, why not take the time to add in universal links for users to get to your app easily? The setup can be less than 5 minutes plus some additional deployment/certificate processing time to enable universal links.  
 
@@ -105,7 +137,7 @@ The example gets our feet wet with universal links.  Universal links are a power
 
 If you're interested in diving in to web development and plan to support more than what Markdown/basic html gives us you can set up a [react based github pages site](https://github.com/gitname/react-gh-pages).  This can provide an expressive router within a static site and perhaps enable more of a dynamic feel to the site.  The process in the steps above will be exactly the same regardless of how you want to make your website.
 
-If you'd like a fun exercise, go to one of your favorite sites and check out their association file.  Remember they can only exist in two places.  It's neat how absolutely massive AASA files can be. (Here is [Youtube's](https://www.youtube.com/apple-app-site-association))
+If you'd like a fun exercise, go to one of your favorite sites and check out their association file.  Remember they can only exist in two places, and as of iOS 13+, they will always be in `/.well-known/`.  It's neat how absolutely massive AASA files can be. (Here is [Youtube's](https://www.youtube.com/apple-app-site-association))
 
 ## Helpful Links
 - [AASA Gist](https://gist.github.com/anhar/6d50c023f442fb2437e1)
@@ -118,3 +150,5 @@ If you'd like a fun exercise, go to one of your favorite sites and check out the
 - [Universal links checklist](https://gist.github.com/andrewrohn/774185e4e15ddcc14f0a1e3c66c943e3)
 - [React Github Pages](https://github.com/gitname/react-gh-pages)
 - [Universal vs deep links](https://www.adjust.com/blog/universal-links-vs-deep-links/)
+- [WWDC 2019 updates](https://developer.apple.com/videos/play/wwdc2019/717/)
+- [iOS 13 universal link breakage thread](https://forums.developer.apple.com/thread/123554)
