@@ -14,6 +14,8 @@ TL;DR:
 
 During [WWDC 2019](https://developer.apple.com/videos/play/wwdc2019/717/), a handful of fundamental changes were presented with [Associated Domains](https://developer.apple.com/documentation/safariservices/supporting_associated_domains_in_your_app)
 
+**Please note that as of the iOS13 release there has been some inconsistent behavior [noted](https://forums.developer.apple.com/thread/123554).  I can still get universal links working consistently running directly on device, but directing to the app store and app store downloads in general on iOS 13+ have not been reliable.  I will update this post with any new Associated Domain release notes.  If this issue is due to not serving the association file as `application/json` we will unfortunately not be able to continue with Github Pages, as they do not allow custom redirects or MIME types.**
+
 ## Universal Links Basics
 
 Universal links require three things:
@@ -129,9 +131,7 @@ More specific handling details for different platforms can be found [here](https
 
 If you want to see this all working for yourself I vetted this process with an application called [Framewerk](https://apps.apple.com/us/app/framewerk/id1496896308).  If you navigate to [Framewerk.app](framewerk.app), you can see the association file used there.
 
-Please note that as of iOS13 release there has been some inconsistent behavior [noted across the board](https://forums.developer.apple.com/thread/123554).  I can still get universal links working consistently running directly on device, but directing to the app store and app store downloads in general on iOS 13+ have not been reliable.  I will update this post with any new Associated Domain release notes.
-
-It is up to us to decide how in depth we want to go with universal linking.  With AppStoreConnect containing fields for marketing and support URL's, why not take the time to add in universal links for users to get to your app easily? The setup can be less than 5 minutes plus some additional deployment/certificate processing time to enable universal links.  
+It is up to us to decide how in depth we want to go with universal linking.  With AppStoreConnect containing fields for marketing and support URL's, why not take the time to add in universal links for users to get to your app easily? The setup can be less than 5 minutes plus some additional deployment/certificate processing time to enable universal links.
 
 The example gets our feet wet with universal links.  Universal links are a powerful way to enable users on multiple platforms to explore content.  At this point we also have the option to enable [webcredentials](https://developer.apple.com/documentation/security/shared_web_credentials) to pass secure credentials between our associated domains.
 
