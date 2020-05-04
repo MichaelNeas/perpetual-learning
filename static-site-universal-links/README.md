@@ -14,7 +14,7 @@ TL;DR:
 
 During [WWDC 2019](https://developer.apple.com/videos/play/wwdc2019/717/), a handful of fundamental changes were presented with [Associated Domains](https://developer.apple.com/documentation/safariservices/supporting_associated_domains_in_your_app)
 
-**Please note that as of the iOS13 release there has been some inconsistent behavior [noted](https://forums.developer.apple.com/thread/123554).  I can still get universal links working consistently running directly on device, but directing to the app store and app store downloads in general on iOS 13+ have not been reliable.  I will update this post with any new Associated Domain release notes.  If this issue is due to not serving the association file as `application/json` we will unfortunately not be able to continue with Github Pages, as they do not allow custom redirects or MIME types.**
+**As of the iOS13 release there has been some inconsistent behavior [noted](https://forums.developer.apple.com/thread/123554).  I can still get universal links working consistently running directly on device, but the redirect to the App Store and fresh App Store downloads on iOS 13+ have not been reliable.  I will update this post with any new Associated Domain release notes.  If this issue is due to not serving the association file as `application/json` we will unfortunately not be able to continue with Github Pages, as they do not allow custom redirects or MIME types.**
 
 ## Universal Links Basics
 
@@ -99,10 +99,10 @@ The last step is to drop our app-site-association file in the root directory of 
 
 ## Validation
 
-If we navigate to our new website and add the path `/apple-app-site-association` after the domain something like this should appear:
+If we navigate to our new website and add the path `/.well-known/apple-app-site-association` after the domain something like this should appear:
 ![Proof of aasa](./aasa-browser.png)
 
-There are many sites that validate association files, but I suggest using [Apple](https://search.developer.apple.com/appsearch-validation-tool) or [Branch.io](https://branch.io/resources/aasa-validator/).
+There are many sites that validate association files, but commonly suggested validators include [Apple](https://search.developer.apple.com/appsearch-validation-tool) or [Branch.io](https://branch.io/resources/aasa-validator/).  **Some validators may not correctly respond to the new format from the WWDC 2019 additions to association files**
 
 Validators typically check for these 5 things:
 ![branch validation](./branch-validation.png "Example showing valid aasa")
