@@ -23,8 +23,8 @@ class Fly {
     }
 }
 
-let array3 = [Bird(name: "Al"), Bird(name: "Tim")]
-let array4 = [Fly(name: "Phil"), Fly(name: "Nil")]
+let array3 = [Bird(name: "Al"), Bird(name: "Crim")]
+let array4 = [Fly(name: "Phi"), Fly(name: "Nil")]
 ```
 
 We can create new arrays from just about anything, without needing to be concerned with any of the implementational details of the Array itself!  Now this is definitely not just the case for Array's but how a ton of the data structures throughout the language operate.  We can see that dictionaries work the same way, but with the addition of a contract for hashing.
@@ -51,3 +51,4 @@ It's incredibly hard to predict the future, and we never know when a business re
 
 ## Helpful Links
 - [Swift Generics Docs](https://docs.swift.org/swift-book/LanguageGuide/Generics.html)
+- https://swiftbysundell.com/tips/inferred-generic-type-constraints/
