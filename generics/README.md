@@ -129,11 +129,11 @@ struct Bird: CustomStringConvertible {
 
 Now we can go ahead and instantiate a `Queue<Bird>()`, and add some logging to the dequeue method that will guarantee some effort put into the description of the type being processed.
 ```swift
-    mutating func dequeue() -> Thing {
-        let removed = things.removeFirst()
-        print(removed.description)
-        return removed
-    }
+mutating func dequeue() -> Thing {
+    let removed = things.removeFirst()
+    print(removed.description)
+    return removed
+}
 ```
 
 As we can see we are offered up the `description` method from code completion, because it is guaranteed to be there from the  `CustomStringConvertible` conformance.
@@ -142,7 +142,118 @@ This is truly one of the coolest parts of Generics.  The developer has to power 
 
 ## Generic Functions
 
+Generic functions can be a part of any type in Swift.  Our Queue already kind of uses generic functions inside the generic struct, but lets add a more explicit generic function with a brand new type.
 
+```swift
+class Cat: CustomStringConvertible {
+    let name: String
+    init(name: String) {
+        self.name = name
+    }
+    var description: String {
+        "\(name)"
+    }
+}
+
+struct Queue<Thing: CustomStringConvertible> {
+    var things = [Thing]()
+    mutating func enqueue(thing: Thing) {
+        things.append(thing)
+    }
+    mutating func dequeue() -> Thing {
+        let removed = things.removeFirst()
+        print(removed.description)
+        return removed
+    }
+    
+    func items<SomeOtherThing: CustomStringConvertible>(matching thing: SomeOtherThing) -> [Thing] {
+        things.filter { $0 is SomeOtherThing && thing.description == $0.description }
+    }
+}
+
+
+var catQueue = Queue<Cat>()
+let persian = Persian(name: "Oti")
+let bengal = Bengal(name: "Beng")
+let bangal2 = Bengal(name: "Bengie")
+let stray = Persian(name: "Shadow")
+let cat = Cat(name: "Beng")
+let bengPersian = Persian(name: "Beng")
+catQueue.enqueue(thing: persian)
+catQueue.enqueue(thing: bengal)
+catQueue.enqueue(thing: bangal2)
+catQueue.items(matching: stray) // []
+catQueue.items(matching: bengal) //[Beng]
+catQueue.items(matching: cat) //[Beng]
+catQueue.items(matching: bengPersian) // []
+```
+For this example we don't care about direct object references and just want to know if there are any cat's in the queue with a specific type and name.  This allows us to use parent classes and it's own reference to tell if there are any valid matches in the queue.
+
+If we focus on the `items` we can see a couple neat things with generics.
+```swift
+    func items<SomeOtherThing: CustomStringConvertible>(matching thing: SomeOtherThing) -> [Thing] {
+        things.filter { $0 is SomeOtherThing && thing.description == $0.description }
+    }
+```
+
+`<SomeOtherThing>` - We can introduce different types completely unrelated to a previously introduced type.  SomeOtherThing can literally be whatever we want, but for the sake of the example I have locked it down to be another `CustomStringConvertible`
+
+## Where Clauses
+
+`Where`'s in Generics are an even more specific way to apply constraints to our generics.
+In the above example of `items` we could have written
+```swift 
+    func items<SomeOtherThing>(matching thing: SomeOtherThing) -> [Thing] where SomeOtherThing: CustomStringConvertible {
+        things.filter { $0 is SomeOtherThing && thing.description == $0.description }
+    }
+```
+and it would have performed the same way.
+
+`Where` really shines in extensions and protocols.
+
+```swift
+extension Queue where Thing: Hashable {
+    func containsDupes() -> Bool {
+        var set = Set<Thing>()
+        for thing in things {
+            if set.contains(thing) {
+                return true
+            } else {
+                set.insert(thing)
+            }
+        }
+        return false
+    }
+}
+
+extension Bird: Hashable {}
+var birdQueue = Queue<Bird>()
+let tweety = Bird(name: "Tweety")
+let red = Bird(name: "Red")
+let pink = Bird(name: "Pink")
+birdQueue.enqueue(thing: tweety)
+birdQueue.enqueue(thing: red)
+birdQueue.enqueue(thing: pink)
+birdQueue.enqueue(thing: pink)
+birdQueue.containsDupes
+```
+
+
+If we wanted to Type 'Thing' constrained to non-protocol, non-class type 'Int'
+
+```swift
+extension Queue where Thing == Int {
+    var sum: Int {
+        things.reduce(0, +)
+    }
+}
+
+var numQueue = Queue<Int>()
+numQueue.enqueue(thing: 1)
+numQueue.enqueue(thing: 2)
+numQueue.enqueue(thing: 3)
+numQueue.sum
+```
 
 
 ## When to use Generics
