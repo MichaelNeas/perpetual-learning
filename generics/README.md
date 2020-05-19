@@ -6,6 +6,8 @@ In english, the definition of [generic](https://www.merriam-webster.com/dictiona
 `characteristic of or relating to a class or group of things; not specific.`
 That's exactly it!  We'll dive into several examples to show that Generics in Swift, and programming in general, all aim to avoid locking down implementation details related to specified types.
 
+The underlying implementation details of Generics is beyond the scope of this blog, but is certainly a potential topic of discussion in a future blog post.
+
 ## Swift uses generics?
 
 In Swift, [Types](https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html) are essential.  They allow the compiler to allocate adequate memory, promote specific optimizations, influence static analysis, and provide developers a nice way to reason about a codebase.  Ever wonder how we can declare a `String` and an `Int` array and they both have the same auxiliary functions, even though both arrays contain different types?
@@ -35,7 +37,7 @@ We can create new arrays from just about anything, without needing to be concern
 
 ## Our own data structure
 
-Lets make a [Queue](https://en.wikipedia.org/wiki/Queue_(abstract_data_type), which is a data structure that resembles a line of people at a coffee shop.  The more people that show up the longer the line gets, growing from the back.  As coffee is produced, it's distributed to the people in the front of the line first.
+Lets make a `generic type` [Queue](https://en.wikipedia.org/wiki/Queue_(abstract_data_type), which is a data structure that resembles a line at a coffee shop.  The more people that show up the longer the line gets, growing from the back.  As coffee is produced, it's distributed to the people in the front of the line first.  In swift we have the power to make generic types out of classes, structures, and enumerations, but for this example we're going with a struct!
 
 ```swift
 struct Queue<Thing> {
@@ -48,6 +50,8 @@ struct Queue<Thing> {
     }
 }
 ```
+
+A `Thing` in this case is known as a `Type Parameter`, we can think of these as placeholders.  These placeholders are common in most languages that allow for Generics.  We can see that our Queue will be made up of "`Thing`'s".  There will be a `Thing` array for storage, and the `enqueue` method requires a `Thing` to be passed in.  These `Thing`'s can be anything.
 
 Let's add some subclasses to the `Cat` class.
 ```swift
@@ -64,7 +68,7 @@ let birdy = Bird(name: "tweety")
 
 In object oriented programming we have the notion of subclassing.  A nice intuitive approach to declaring functions or types is to use the super type.  But with Generics we can do better!  We can abstract our code in a way that it doesn't matter what type gets passed in, and that shows the shiny value add of generics.
 
-thennnn make a queue
+Then make a queue
 ```swift
 var catQueue = Queue<Any>()
 catQueue.enqueue(thing: persian)
@@ -81,6 +85,23 @@ var catQueue = Queue<Cat>()
 By a simple change of `Any` to `Cat` we can see the the birdy is no longer allowed in this queue thanks to some fancy static analysis:
 `Cannot convert value of type 'Bird' to expected argument type 'Cat'`
 
+A final note
+
+```
+We're not restricted to 1 Typed Parameter in Swift
+We can get as crazy as we want
+```
+```swift
+struct Queue<Thing1, Thing2, Thing3> {
+```
+With 3 typed parameters we could instantiate the Queue like:
+```swift
+let crazyQueue = Queue<Cat, Bird, Int>()
+```
+There's no restrictions today on declaring types with multiple parameters and this can help us provide more structure in our generic types.  An example of using the `crazyQueue` would be if we want to maintain two storage arrays, one for birds and one for cats.  
+
+In your journey I can guarantee 100% that you will see generic type parameters with variables written as `T`, `U` & `V` but I would encourage using more specific naming, even though `Thing` is not much better than `T`, I would argue "thing" reads better than "T".
+
 ## Type Constraints and Conformance
 
 Another way to apply that restriction of `Cat` type we can actually use `Type Constraints` as so.
@@ -89,7 +110,7 @@ struct Queue<Thing: Cat> {
 ```
 By redefining the fundamental requirements of this queue, any future developer would no longer be able to instantiate the catQueue without using `Cat` types.
 
-We now have the ability to control the expected types we want in our queues.  But it certainly doesn't stop at parent classes.  There are tons of [common protocols](https://developer.apple.com/documentation/swift/adopting_common_protocols) throughout the Swift language that types conform to.  This allows us to write our queue based on contractual requirements of a protocol.
+We now have the ability to control the expected behavior/type we want in our queues.  But it certainly doesn't stop at parent classes.  There are tons of [common protocols](https://developer.apple.com/documentation/swift/adopting_common_protocols) throughout the Swift language that types conform to.  This allows us to write our queue based on contractual requirements of a protocol.
 
 ```swift
 struct Queue<Thing: CustomStringConvertible> {
@@ -107,7 +128,7 @@ struct Bird: CustomStringConvertible {
 ```
 
 Now we can go ahead and instantiate a `Queue<Bird>()`, and add some logging to the dequeue method that will guarantee some effort put into the description of the type being processed.
-```
+```swift
     mutating func dequeue() -> Thing {
         let removed = things.removeFirst()
         print(removed.description)
@@ -123,6 +144,7 @@ This is truly one of the coolest parts of Generics.  The developer has to power 
 
 
 
+
 ## When to use Generics
 
 If you get to a place where you write functions that may do identically the same thing, besides the types being passed in, that is an easy way to throw in the use of a Generic.  Not only is it good for code reduction but allows you to use even more Types in the future than what you may be thinking of in the current moment.
@@ -131,9 +153,9 @@ A super popular place I've seen generics is in decode/encode methods when dealin
 
 ## Final thoughts
 
-We don't need to make entire codebases generic, but being comfortable and having the foresight for good times to use generics is an incredibly powerful skill.
+We don't need to make entire codebases generic, but being comfortable and having the foresight for good times to use generics is a powerful skill.
 
-It's incredibly hard to predict the future, and we never know when a business requirement will change in the real world.  Generics can help us reduce the amount of extra work we have to do long term, by providing single testable and expressive functionality that can easily be reused.
+It's nearly impossible to predict the future, and we never know when a business requirement will change in the real world.  Generics can help us reduce the amount of extra work we have to do long term by providing single testable and expressive functionality that can easily be reused.
 
 ## Helpful Links
 - [Swift Generics Docs](https://docs.swift.org/swift-book/LanguageGuide/Generics.html)
