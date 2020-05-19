@@ -1,22 +1,26 @@
 # Swift Generics Basics - May 2020
 
-Swift Generics allow the standard library to be as versatile as it is.  You've already used Generics without even thinking about it.  The word `generic` might seem a little scary or confusing at first, but I want to show how simple and powerful Generics are, practical reasons to use them today, and touch on why thinking abstract thinking promotes a more robust codebase.
+Swift Generics allow the standard library to be as versatile as it is.  You've already used Generics without even thinking about it.  The word `generic` might seem a little scary or confusing at first, but I want to show how beneficial Generics can be, practical reasons to use them today, and touch on why thinking abstract thinking promotes a more robust codebase.
+
+In english, the definition of [generic](https://www.merriam-webster.com/dictionary/generic) as an adjective gives a nice insight into the goal of generic programming.
+`characteristic of or relating to a class or group of things; not specific.`
+That's exactly it!  We'll dive into several examples to show that Generics in Swift, and programming in general, all aim to avoid locking down implementation details related to specified types.
 
 ## Swift uses generics?
 
-Ever wonder how we can declare a `String` and an `Int` array and they both have the same functions, even though both arrays contain different types?
+In Swift, [Types](https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html) are essential.  They allow the compiler to allocate adequate memory, promote specific optimizations, influence static analysis, and provide developers a nice way to reason about a codebase.  Ever wonder how we can declare a `String` and an `Int` array and they both have the same auxiliary functions, even though both arrays contain different types?
 ```swift
 	let array1 = [Int]()
 	let array2 = [String]()
 ```
-Swift built these [Collection types](https://docs.swift.org/swift-book/LanguageGuide/CollectionTypes.html) completely with Generics.  That's how we can create array's out of a bunch of different Objects or References.  
+Swift built these [Collection types](https://docs.swift.org/swift-book/LanguageGuide/CollectionTypes.html) completely with Generics.  At a high level, this is how we can create arrays out of different Classes or Structs.
 
 ```swift
 struct Bird {
     let name: String
 }
 
-class Fly {
+class Cat {
     let name: String
     init(name: String) {
         self.name = name
@@ -24,24 +28,106 @@ class Fly {
 }
 
 let array3 = [Bird(name: "Al"), Bird(name: "Crim")]
-let array4 = [Fly(name: "Phi"), Fly(name: "Nil")]
+let array4 = [Cat(name: "Boosh"), Cat(name: "Styler")]
 ```
 
-We can create new arrays from just about anything, without needing to be concerned with any of the implementational details of the Array itself!  Now this is definitely not just the case for Array's but how a ton of the data structures throughout the language operate.  We can see that dictionaries work the same way, but with the addition of a contract for hashing.
+We can create new arrays from just about anything, without needing to be concerned with any of the implementational details of the Array itself! This is not just the case for Array's but how the majority of data structures throughout the language operate.  We can see that dictionaries work the same way, but with the addition of a contract for hashing.
 
-## Our own array
+## Our own data structure
+
+Lets make a [Queue](https://en.wikipedia.org/wiki/Queue_(abstract_data_type), which is a data structure that resembles a line of people at a coffee shop.  The more people that show up the longer the line gets, growing from the back.  As coffee is produced, it's distributed to the people in the front of the line first.
+
+```swift
+struct Queue<Thing> {
+    var things = [Thing]()
+    mutating func enqueue(thing: Thing) {
+        things.append(thing)
+    }
+    mutating func dequeue() -> Thing {
+        things.removeFirst()
+    }
+}
+```
+
+Let's add some subclasses to the `Cat` class.
+```swift
+class Persian: Cat {}
+class Bengal: Cat {}
+```
+
+From there we'll instantiate 2 cats and a bird just for fun
+```swift
+let persian = Persian(name: "Oti")
+let bengal = Bengal(name: "Beng")
+let birdy = Bird(name: "tweety")
+```
+
+In object oriented programming we have the notion of subclassing.  A nice intuitive approach to declaring functions or types is to use the super type.  But with Generics we can do better!  We can abstract our code in a way that it doesn't matter what type gets passed in, and that shows the shiny value add of generics.
+
+thennnn make a queue
+```swift
+var catQueue = Queue<Any>()
+catQueue.enqueue(thing: persian)
+catQueue.enqueue(thing: bengal)
+catQueue.enqueue(thing: birdy)
+```
+
+Wow would you look at that, `Any` as a type in our generic Queue allows for `birdy` to get added.  That is not the behavior we would want out of the catQueue, as Tweety would surely be a goner as the cats wait for their coffee to be served.  But it is super neat that we can combine types! We will lose some information using this `Any` type, but it's important to know that it's possible.
+
+```swift
+var catQueue = Queue<Cat>()
+```
+
+By a simple change of `Any` to `Cat` we can see the the birdy is no longer allowed in this queue thanks to some fancy static analysis:
+`Cannot convert value of type 'Bird' to expected argument type 'Cat'`
+
+## Type Constraints and Conformance
+
+Another way to apply that restriction of `Cat` type we can actually use `Type Constraints` as so.
+```swift
+struct Queue<Thing: Cat> {
+```
+By redefining the fundamental requirements of this queue, any future developer would no longer be able to instantiate the catQueue without using `Cat` types.
+
+We now have the ability to control the expected types we want in our queues.  But it certainly doesn't stop at parent classes.  There are tons of [common protocols](https://developer.apple.com/documentation/swift/adopting_common_protocols) throughout the Swift language that types conform to.  This allows us to write our queue based on contractual requirements of a protocol.
+
+```swift
+struct Queue<Thing: CustomStringConvertible> {
+```
+
+In this example we make the Queue require that any Queue being made has to be made up of Types the implement [CustomStringConvertible](https://developer.apple.com/documentation/swift/customstringconvertible) in order to print any of the thing's descriptions.  This conformance requires a description declaration like so.
+```swift
+struct Bird: CustomStringConvertible {
+    let name: String
+    
+    var description: String {
+        "\(name)"
+    }
+}
+```
+
+Now we can go ahead and instantiate a `Queue<Bird>()`, and add some logging to the dequeue method that will guarantee some effort put into the description of the type being processed.
+```
+    mutating func dequeue() -> Thing {
+        let removed = things.removeFirst()
+        print(removed.description)
+        return removed
+    }
+```
+
+As we can see we are offered up the `description` method from code completion, because it is guaranteed to be there from the  `CustomStringConvertible` conformance.
+
+This is truly one of the coolest parts of Generics.  The developer has to power to be as restrictive as they desire, and anyone who instantiates a type in the future is gated by swifts powerful static analysis tools.
 
 ## Generic Functions
 
 
 
-## Type Constraints and Conformance
-
-Talk about the fly dictionary needing to adhere to certain contracts.
-
 ## When to use Generics
 
 If you get to a place where you write functions that may do identically the same thing, besides the types being passed in, that is an easy way to throw in the use of a Generic.  Not only is it good for code reduction but allows you to use even more Types in the future than what you may be thinking of in the current moment.
+
+A super popular place I've seen generics is in decode/encode methods when dealing with sending data over the wire.
 
 ## Final thoughts
 
@@ -51,4 +137,4 @@ It's incredibly hard to predict the future, and we never know when a business re
 
 ## Helpful Links
 - [Swift Generics Docs](https://docs.swift.org/swift-book/LanguageGuide/Generics.html)
-- https://swiftbysundell.com/tips/inferred-generic-type-constraints/
+- [Generic Type Constraints](https://swiftbysundell.com/tips/inferred-generic-type-constraints/)
