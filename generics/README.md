@@ -297,13 +297,13 @@ func get<T: Decodable>(from url: String, completion: @escaping (Result<T, Error>
 
 Writing network requests like this allows us to be flexible with what types we are be expecting to come back from a network request.  This allows us to only write 1 method and make as many requests that will serialize/deserialize as needed to get data and populate a UI.
 
-Other popular places generics are used include:
+Other practical use cases for generics include:
  - UserDefaults
  - Disk File Read/Write
  - Most implementations of Data Structures
  - Error Handling
  - NSAttributed Strings
- - Explicit Memory Allocations 
+ - Explicit Memory Allocations
 
 The list goes on and on.
 
