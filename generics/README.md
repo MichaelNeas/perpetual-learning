@@ -57,6 +57,8 @@ Let's add some subclasses to the `Cat` class.
 ```swift
 class Persian: Cat {}
 class Bengal: Cat {}
+class Tabby: Cat {}
+
 ```
 
 From there we'll instantiate 2 cats and a bird just for fun
@@ -140,6 +142,8 @@ As we can see we are offered up the `description` method from code completion, b
 
 This is truly one of the coolest parts of Generics.  The developer has to power to be as restrictive as they desire, and anyone who instantiates a type in the future is gated by swifts powerful static analysis tools.
 
+At this point we can make a Queue out of *ANYTHING* that conforms to CustomStringConvertible, whether that be a Cat, Bird, Person, Place, the only thing that matters is that StringConvertible conformance.
+
 ## Generic Functions
 
 Generic functions can be a part of any type in Swift.  Our Queue already kind of uses generic functions inside the generic struct, but lets add a more explicit generic function with a brand new type.
@@ -171,21 +175,20 @@ struct Queue<Thing: CustomStringConvertible> {
     }
 }
 
-
 var catQueue = Queue<Cat>()
-let persian = Persian(name: "Oti")
+let pumpkin = Tabby(name: "Pumpkin")
 let bengal = Bengal(name: "Beng")
-let bangal2 = Bengal(name: "Bengie")
-let stray = Persian(name: "Shadow")
+let bengie = Bengal(name: "Bengie")
+let stray = Tabby(name: "Sparka")
 let cat = Cat(name: "Beng")
-let bengPersian = Persian(name: "Beng")
-catQueue.enqueue(thing: persian)
+let persianBeng = Persian(name: "Beng")
+catQueue.enqueue(thing: pumpkin)
 catQueue.enqueue(thing: bengal)
-catQueue.enqueue(thing: bangal2)
+catQueue.enqueue(thing: bengie)
 catQueue.items(matching: stray) // []
 catQueue.items(matching: bengal) //[Beng]
 catQueue.items(matching: cat) //[Beng]
-catQueue.items(matching: bengPersian) // []
+catQueue.items(matching: persianBeng) // []
 ```
 For this example we don't care about direct object references and just want to know if there are any cat's in the queue with a specific type and name.  This allows us to use parent classes and it's own reference to tell if there are any valid matches in the queue.
 
@@ -260,13 +263,40 @@ numQueue.sum
 
 If you get to a place where you write functions that may do identically the same thing, besides the types being passed in, that is an easy way to throw in the use of a Generic.  Not only is it good for code reduction but allows you to use even more Types in the future than what you may be thinking of in the current moment.
 
-A super popular place I've seen generics is in decode/encode methods when dealing with sending data over the wire.
+A super popular place I've seen generics include network tasks with decode/encode constraints.
+```swift
+func get<T: Decodable>(from url: String, completion: @escaping (Result<T, Error>) -> Void) {
+    let request = URLRequest(url: URL(string: url)!)
+    let task = URLSession.shared.dataTask(with: request, completionHandler: { data, response, error in
+        guard let data = data else { return }
+        do {
+            let object = try JSONDecoder().decode(T.self, from: data)
+            completion(Result.success(object))
+        } catch let error {
+            completion(Result.failure(error))
+        }
+    })
+    task.resume()
+}
+```
+
+Other popular places I've seen or used generics is: 
+ - UserDefaults
+ - Disk File Read/Write
+ - Most implementations of Data Structures
+ - Error Handling
+ - NSAttributed Strings
+ - Explicit Memory Allocations 
+
+The list goes on and on.
+
+A popular way to start out using generics is to write all your code using specific types and when you see overlap, in functionality think about deduplication with generics.
 
 ## Final thoughts
 
-We don't need to make entire codebases generic, but being comfortable and having the foresight for good times to use generics is a powerful skill.
+We don't need to make entire codebases generic, but being comfortable and having the foresight for good times to use generics is a powerful skill.  With practice, use cases for generics will jump out at you.  As with most things, the biggest thing is to dive in and try things on your own.  Make a Dog Hair Salon queue or practice a random abstract data type using Generics.  New errors and warnings are introduced into the compiler regularly and can help you on your journey.
 
-It's nearly impossible to predict the future, and we never know when a business requirement will change in the real world.  Generics can help us reduce the amount of extra work we have to do long term by providing single testable and expressive functionality that can easily be reused.
+It's nearly impossible to predict the future, and we never know when a business requirement will change in the real world.  Generics can help us reduce the amount of extra work we have to do long term by providing single testable and expressive functionality that can easily be reused.  Writing Tests around the constraint system of generics allows for great practice and understanding of what our Generic Types are truly capable of.
 
 ## Helpful Links
 - [Swift Generics Docs](https://docs.swift.org/swift-book/LanguageGuide/Generics.html)
