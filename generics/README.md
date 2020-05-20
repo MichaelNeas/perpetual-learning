@@ -1,4 +1,4 @@
-# Swift Generics Basics - May 2020
+# Fundamentally Understanding Swift Generics
 
 Swift Generics are one of the primary reasons underlying the versatility of the Swift Standard Library.  If you have written any Swift, I would bet you've already used Generics.  The term `Generic` might seem scary or confusing at first, but I want to demonstrate how beneficial Generics can be, practical reasons to using them, and why abstract thinking promotes a more robust and enriched codebase.
 
@@ -319,3 +319,4 @@ It's nearly impossible to predict the future, we never know when a business requ
 - [Swift Generics Docs](https://docs.swift.org/swift-book/LanguageGuide/Generics.html)
 - [Generic Type Constraints](https://swiftbysundell.com/tips/inferred-generic-type-constraints/)
 - [Conditional Conformance](https://swift.org/blog/conditional-conformance/)
+- [Other Blog Posts by me](https://neas.dev/)
