@@ -1,18 +1,18 @@
 # Fundamentally Understanding Swift Generics
 
-Swift Generics are one of the primary reasons underlying the versatility of the Swift Standard Library.  If you have written any Swift, I would bet you've already used Generics.  The term `Generic` might seem scary or confusing at first, but I want to demonstrate how beneficial Generics can be, practical reasons to using them, and why abstract thinking promotes a more robust and enriched codebase.
+Swift Generics are one of the driving forces behind the versatility of the Swift Standard Library.  If you have written any Swift, you've probably already used Generics.  The term `Generic` might seem scary or confusing at first, but I want to demonstrate how beneficial Generics can be, practical reasons for using them, and why abstract thinking promotes a more robust and enriched codebase.
 
 In English, a definition of [generic](https://www.merriam-webster.com/dictionary/generic) provides an insight to the goal of [Generic programming](https://en.wikipedia.org/wiki/Generic_programming).
 A `characteristic of or relating to a class or group of things; not specific.`
-And that's exactly it!  With Generics, developers aim to avoid locking down implementation details related to specific types and produce more flexible code.
+And that's exactly it!  With Generics, developers aim to avoid locking down implementation details related to specific types to produce more flexible code.
 
-This article dives into several examples of Swift Generics that can most likely be applied to other languages.
+We will dive into several Swift Generic examples that can most likely be applied to other languages.
 
-The underlying implementation details of Generics in the compiler is beyond the scope of this blog, but is a potential discussion topic based on future interest.
+The underlying implementation details of Generics at the compiler level is beyond the scope of this post, but is a potential discussion topic based on future interests.
 
 ## Swift uses generics?
 
-[Types](https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html) are essential in Swift.  They give the compiler enough information to allocate adequate memory, promote specific optimizations, influence static analysis, and provide developers a way to reason about a codebase.  Ever wonder how we can declare a `String` and `Int` [array](https://developer.apple.com/documentation/swift/array) and they will both have the same basic auxiliary functions, even though both arrays contain different types?
+[Types](https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html) are essential in Swift.  They give the compiler enough information to allocate adequate memory, promote various optimizations, influence static analysis, and provide developers a way to reason about a codebase.  Ever wonder how we can declare a `String` or `Int` [array](https://developer.apple.com/documentation/swift/array), then come to find that they both have the same basic auxiliary functions.
 ```swift
 let ints = [Int]()
 let strings = [String]()
@@ -35,12 +35,12 @@ let birds = [Bird(name: "Al"), Bird(name: "Crim")]
 let cats = [Cat(name: "Boosh"), Cat(name: "Styler")]
 ```
 
-Just about any type can be used in the creation of a new array. No need to be concerned with implementational details of the array type itself!  This concept doesn't only apply to array's, in fact, the majority of the data structures throughout the language operate similarly.  If we want to keep track of the number of Birds, we can do so by declaring a [dictionary](https://developer.apple.com/documentation/swift/dictionary). 
+Just about any type can be used in the creation of a new array. There is no need to be concerned with the implementational details of the array type itself.  This concept does not only apply to array's.  The majority of the data structures throughout the language operate similarly.  For example, if we want to keep track of the number of Birds, we can declare a [dictionary](https://developer.apple.com/documentation/swift/dictionary). 
 ```swift
 var birdDictionary = [Bird: Int]()
 ```
 
-This will bring surface an additional requirement for our Bird struct to be [Hashable](https://developer.apple.com/documentation/swift/hashable).
+This will surface an additional requirement for our Bird struct to be [Hashable](https://developer.apple.com/documentation/swift/hashable).
 The compiler tells us `Generic struct 'Dictionary' requires that 'Bird' conform to 'Hashable'`
 
 Swift allows us to easily extend Bird to be `Hashable`.  Since Bird is a `struct` and only contains a name property which is a `String` type, it conforms to `Hashable` without needing to implement any methods explicitly.  All we have to do is extend Bird to conform to Hashable and Swift will handle the rest for us.  To read more about this check out the [documentation](https://developer.apple.com/documentation/swift/hashable).
@@ -48,13 +48,13 @@ Swift allows us to easily extend Bird to be `Hashable`.  Since Bird is a `struct
 extension Bird: Hashable {}
 ```
 
-The notion of _Type Conformance_ is a fundamental requirement before anyone can truly understand Generics.  One way to understand conformance is to think about driving a car.  A person can get their license by passing a test which prove they understand how to drive.  They have the freedom of using a vehicle on public roads as long as they follow the rules.  The driver's license is proof that this person should understand the standards of the road.  Any rule following or contractual agreements are essentially implying some type of conformance.  
+The notion of _Type Conformance_ is a fundamental requirement before anyone can truly understand Generics.  One way to understand conformance is to think about driving a car.  A person can get their license by passing a test which proves they understand how to drive.  They have the freedom to use a vehicle on public roads as long as they follow the rules.  The driver's license is proof that this person should understand the standards of the road.  Any sort of rule following or contractual agreements are essentially implying some type of conformance.
 
 In programming it's not very different.  Bird conform's to Hashable and now gets access to all the cool things Hashable Types can do, provided that it always implements the requirements to **be** Hashable.
 
 ## Our own data structure
 
-Let's make a `generic type` [Queue](https://en.wikipedia.org/wiki/Queue_(abstract_data_type)), a data structure that resembles a line at a coffee shop.  As more people show up, the line grows from the back.  As coffee is produced, it's distributed to those in the front of the line first, and they leave.  In swift we have the power to make generic types out of classes, structures, and enumerations, for this example let's go with a struct.
+Let's make a `generic type` [Queue](https://en.wikipedia.org/wiki/Queue_(abstract_data_type)), a data structure that resembles a line at a coffee shop.  As more people show up, the line grows from the back.  As coffee is produced, it is distributed to those in the front of the line first and they leave.  In swift we have the power to make generic types out of classes, structures, and enumerations, for this example let's go with a struct.
 
 ```swift
 struct Queue<Thing> {
@@ -68,7 +68,7 @@ struct Queue<Thing> {
 }
 ```
 
-A `Thing` in this case is known as a `Type Parameter`, we can think of these as placeholders.  These placeholders are common in most languages that implement Generics.  We can see that our Queue will be made up of "`Thing`'s".  There will be a `Thing` array created for storage and the `enqueue` function requires some `Thing` to be passed to it.  These `Thing`'s can be just about **anything**.
+A `Thing` in this case is known as a `Type Parameter`, we can think of these as placeholders.  Placeholders are common in most languages that implement Generics.  We can see that our Queue will be made up of "`Thing`'s".  There will be a `Thing` array created for storage and the `enqueue` function requires some `Thing` to be passed to it.  These `Thing`'s can be just about **any** type.
 
 Let's add some subclasses to the `Cat` class.
 ```swift
@@ -94,7 +94,7 @@ catQueue.enqueue(thing: bengal)
 catQueue.enqueue(thing: birdy)
 ```
 
-Would you look at that, `Any` as a type in our generic Queue allows for `birdy` to get added.  This may not be the behavior we would want out of the catQueue, as Tweety would surely be a goner as the cats wait for their coffee to be served.  The notion of combining completely separate types is the value add.  Naturally, we will lose information by using `Any` type, but it's important to know that it's possible.
+Would you look at that, `Any` as a type in our generic Queue allows for `birdy` to be added.  This may not be the behavior we would want out of the catQueue, as Tweety would surely be a goner while the cats wait for their coffee to be served.  The notion of combining completely separate types is the value added from Generics.  Naturally, we will lose information by using `Any` type, but it's important to know that it's possible.
 
 ```swift
 var catQueue = Queue<Cat>()
@@ -102,7 +102,7 @@ var catQueue = Queue<Cat>()
 
 A simple change from `Any` to `Cat` demonstrates that the birdy is no longer allowed in this queue thanks to some fancy [static analysis](https://developer.apple.com/library/archive/documentation/DeveloperTools/Conceptual/debugging_with_xcode/chapters/static_analyzer.html) Swift tells us that it `Cannot convert value of type 'Bird' to expected argument type 'Cat'`
 
-We've added 1 typed parameter to the Queue but it's important to know that
+We've added 1 typed parameter to the Queue but:
 ```
 We're not restricted to 1 Typed Parameter in Swift
 We can get as crazy as we want
@@ -114,9 +114,9 @@ With 3 typed parameters we could instantiate the Queue like:
 ```swift
 let crazyQueue = Queue<Cat, Bird, Int>()
 ```
-There are no restrictions on declaring types with multiple parameters which can lead to more structure in generic types.  An example of using the `crazyQueue` could be to maintain two storage arrays, one for birds and one for cats.  That way Tweety can have a calm waiting experience completely separated from the line of cats.
+There are no restrictions on declaring types with multiple parameters which can lead to more structure in generic types.  An example of using the `crazyQueue` could be to maintain two storage arrays, one for birds and one for cats.  That way Tweety can have a calm waiting experience separated from the line of cats.
 
-In your Generic's journey I can guarantee that you will see generic type parameters with variables written as `T`, `U` & `V`.  If you're already working in a preexisting codebase or use dependencies go ahead and search for "<T>" in XCode and see what shows up!  I would encourage using more specific naming to clarify abstract intentions. (Even though `Thing` is not much better than `T`, I would argue "thing" reads better than "T".)
+In your Generic's journey I can guarantee that you will see generic type parameters with variables written as `T`, `U` & `V`.  If you're already working in a preexisting codebase or use dependencies go ahead and search for "<T>" in XCode and see what shows up!  I encourage using more specific naming to clarify abstract intentions. (Even though `Thing` is not much better than `T`, I would argue "thing" reads better than "T".)
 
 ## Type Constraints and Conformance
 
@@ -153,7 +153,7 @@ mutating func dequeue() -> Thing {
 }
 ```
 
-The developer can provide as many constraints as they desire, anyone who instantiates the type in the future is handed the contractual agreement by Swift's static analysis tools before compilation occurs.
+Developers can provide as many constraints as they desire, any future instantiations will carry the contractual agreement by Swift's static analysis tools before compilation occurs.
 
 A Queue can be made from **ANYTHING** that conforms to CustomStringConvertible, whether that be a Cat, Bird, Person, Place, Food, whatever.  The _only_ thing that matters is that the type adhere's to the conformance.
 
@@ -276,9 +276,9 @@ Exactly like `containsDupes`, `sum` will only be available for Queue's made up o
 
 ## When to use Generics
 
-A fundamental use case of Generics surfaces when we write functions that may do identically the same thing, besides the types being passed in.  Not only are Generics good for code reduction but they allow us to use even more Types in the future that may have not existed during the creation of the generic.
+A fundamental use case of Generics surfaces when we write functions that may do identically the same thing besides the types being passed in.  Not only are Generics good for code reduction but they allow us to use Types in the future that may have not existed during the creation of the generic.
 
-An incredibly popular place for generics to exist in most apps include network tasks with decode/encode constraints.
+In most applications today, an incredibly popular place for generics are found in network tasks with decodable/encodable constraints.
 ```swift
 func get<T: Decodable>(from url: String, completion: @escaping (Result<T, Error>) -> Void) {
     let request = URLRequest(url: URL(string: url)!)
@@ -295,9 +295,9 @@ func get<T: Decodable>(from url: String, completion: @escaping (Result<T, Error>
 }
 ```
 
-Writing network requests like this allows us to be flexible with what types we are be expecting to come back from a network request.  This allows us to only write 1 method and make as many requests that will serialize/deserialize as needed to get data and populate a UI.
+Writing network requests like this allows us to be flexible with what types we are be expecting to come back from a network request.  This allows us to only write 1 request method and allow for many different types of requests that will serialize/deserialize as needed to get data and populate a UI.
 
-Other practical use cases for generics include:
+Some other practical use cases for generics can be found in:
  - UserDefaults
  - Disk File Read/Write
  - Most implementations of Data Structures
@@ -305,13 +305,13 @@ Other practical use cases for generics include:
  - NSAttributed Strings
  - Explicit Memory Allocations
 
-The list goes on and on.
+The list goes on and on, see if you can wrap some implementation details of any item from the list in generic code.
 
 ## Final thoughts
 
 Similarly to the layout of this article, I like to think about generics from a blank canvas perspective.  Adding constraints as I go, rather that removing them.  This allows me to visualize added functionality over potentially deprecating previous expectations.
 
-That being said, we don't need to make entire codebases generic, but being comfortable and having the foresight for good times to use generics is a powerful skill to lean on.  With practice, use cases for generics will jump out at you.  The biggest thing is to dive in and try it out on your own.  I have included the playground for all the code [here](./resources), feel free to take that and have a go!  Make a Dog Hair Salon queue or practice a random abstract data type using Generics.  New errors and warnings are introduced into the compiler regularly and will be essential to assisting you on your journey.
+That being said, we don't need to make entire codebases generic, but being comfortable and having the foresight for good applications of generics is a powerful skill to lean on.  With practice, use cases for generics will jump out at you.  I have included the playground for all the code [here](./resources), feel free to take that and have a go!  Make a Dog Hair Salon queue or practice a random abstract data type using Generics.  New errors and warnings are introduced into the compiler regularly and will be essential to assisting you on your journey.
 
 It's nearly impossible to predict the future, we never know when a business requirement will change in the real world.  Generics can help us reduce the amount of extra work we have to do long term by providing single, testable, and expressive functionality that can easily be reused.  Writing Tests around the constraint system of generics allows for great practice and understanding of what our Generic's are truly capable of.
 
@@ -320,3 +320,4 @@ It's nearly impossible to predict the future, we never know when a business requ
 - [Generic Type Constraints](https://swiftbysundell.com/tips/inferred-generic-type-constraints/)
 - [Conditional Conformance](https://swift.org/blog/conditional-conformance/)
 - [Other Blog Posts by me](https://neas.dev/)
+- [My github](https://github.com/michaelneas)
