@@ -71,6 +71,10 @@ Seems like the unit tests for realm storage were throwing `EXC_BAD_ACCESS` when 
 
 So now that I knew how to get the project working with SPM and a clibrary i started rebuilding the project off develop.  Testing the Realm tests every step of the way.  Nothing was breaking and I was slowly adding back all functionality.  It got time to add back the scrypt-swift project and I was nervous but ready for this thing to be completed.  I added it, and it all worked perfectly!  Then came time for the unit tests.  Now i was referencing a class somewhere else for a static time variable and that class became required to kick off the unit tests for my new functionality.  I clicked add to test target on the Realm Storage singleton and BOOOM the crash happened again! Seemed like the Test Realm instance and the singleton were getting mixed up during the testing.  So I pointed to a different static, removed the test membership, and we were off to the races again.
 
+## UNTIL
+
+A BUILD CONFIGURATION [issue](https://forums.swift.org/t/cannot-using-spm-module-with-some-custom-configuration-not-debug-release-on-xcode-11/26412) arrives with using SPM in XCode 11 with different configurations.   At this point had to make a decision to hack in a weird solution to incorporate all the react native cocoapods for staging but yet maintain Debug/Release configuration for the SPM Scrypt project.  And it was at this moment I realized SPM was just not going to cut it.   I love SPM but it's just too new to throw into a project like this.  I removed all the integration and work done before and added in the libscrypt c library with a header pointing directly to C.  Kept a Swift wrapper around the library and everything worked as expected. 
+
 
 ## In the end
 
