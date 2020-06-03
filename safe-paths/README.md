@@ -1,41 +1,60 @@
-# COVID Safe Paths
+# Adventures of Scrypt, A Journey with SPM
 
-
+This is a story about the trials and tribulations of a feature request with regularly changing requirements, that ended up teaching me more than I could bargain for.  Hopefully any of this experience may be of assistance to others or an enjoyable read at the very least.
 
 ## The beginnings
 
-Get information about some help needed on this new open source project.  Find out it's a react native application and there was a requirement for Scrypt hashing the location coordinates geohashes and timestamps in order to provide more secure location data.
+One day I received a message: "i've given Mike/Tambet no context so they probably have no idea what is gong on". Never has a sentiment ever been so spot on.  I come to find out that new open source React Native application was under construction with the goal to help out the world with understanding their potential exposure to the corona virus.  The app relied heavily on background geo location, there was little to no UI at the time and a few settings.  
 
-## A change
+My task: Assist the JS side with a better mechanism to encrypt user location data.  More specifically I was to generate [geohashes](https://www.movable-type.co.uk/scripts/geohash.html) from location coordinates, concatenate that hash with the timestamp relating to when the data was produced and finally put that String through a [Scrypt](https://en.wikipedia.org/wiki/Scrypt) hashing function in order to provide more secure comparison of location data.
 
-From there the Android side of the house brought up a good point that the hash calculation might be better done in one place on the JS side.  So we start building the bridge and hooks into the secure Realm DB.  The JS side got the implementation all setup and ready to go.  When we find out the [RN library](https://github.com/mauron85/react-native-background-geolocation) for background locations keeps their own internal store of location data in a mySQLLite DB. And we are forced to inject our own code into the transform to prevent this from happening.  On both sides of the house the code checks for the existance of location data and then tries to store it.  SO we were like, "okay let's make it nil" TURNS OUT. That if you make it nil the location callback on the JS side stops getting called.  From there the JS implementation was essentially useless if we wanted to make sure that the mySQLite DB was not storing people's data in an unsecure manor.
+## Ready!
 
+From there the Android side of the house brought up a good point.  The hash calculation might be better done in one place, with the same functions producing the output String on the JS side.  This would reduce any issue behind Android and iOS having differing implementations.  It seems like the perfect use case for the JS layer and we start building a bridged `saveLocation` method to pass the data into an existing secure Realm DB.  In no time at all the combined native and RN implementations were all setup and ready to go. Until...  
+
+## First Hurdle
+
+We come to find out the [RN library](https://github.com/mauron85/react-native-background-geolocation) for background geo locations keeps their own internal store of location data in a mySQLLite DB.  This went against the entire purpose of having an encrypted Realm Storage solution in the first place and we are now forced to inject our own code into the location transform callback to prevent this from happening.  On both sides of the library there is code to check for the existence of location data and then tries to store it.  SO first idea that comes to mind, "okay let's make it nil".  Since the check in the library was explicitly comparing against `nil` this was a reasonable assumption. 
+
+TURNS OUT. That if we passed back a nil location in the transform, the react native location callback on the JS side will never be called!  From that point alone, the JS implementation was essentially useless now if we wanted to make sure that the mySQLite DB was not storing user data in it's currently insecure manor.
 
 ## Back to the drawing board
 
-At this point we've received new requirements that it would be better to collect geohashes based on the 8 cardinal directions, with a time 5 minutes ahead and behind the current timestamp in the location data.  The additional complexity was already conquered by the awesome JS developer so it was just a translation for the native side.  We just had to pull in or implement a geohash natively.  I chose to go with [this implementation](https://github.com/nh7a/Geohash/blob/master/Sources/Geohash/Geohash.swift) and Android went with [this kotlin implementation](https://github.com/drfonfon/android-kotlin-geohash).  Getting the timestamps and calculating unique geohashes was no problem.  This became the "password" we were going to hash using Scrypt.  By taking the unique geohashes and concatenating with the respective timestamps.
+At this point we've also received the word that it would be better to collect geohashes based on 8 cardinal directions approximately 10 meters surrounds a location coordinate along with a timestamp 5 minutes ahead and behind the current time from the location data.  The additional complexity was already conquered by the awesome JS developer so it was became a translation on the native side.  We had to pull in or implement a geohash natively.  I chose to go with [this implementation](https://github.com/nh7a/Geohash/blob/master/Sources/Geohash/Geohash.swift) and Android went with [this kotlin implementation](https://github.com/drfonfon/android-kotlin-geohash).  Getting the timestamps and calculating unique geohashes was a 1 line calculation.  By taking the unique geohashes and concatenating with the respective +/- 5 minute timestamps we had our "password" to hash using Scrypt. 
 
 ## SCRYPT
 
-Here's were things get super interesting on the Swift side.  Java has this great implementation of Scrypt called [Bouncy Castle](https://www.bouncycastle.org/) so it was really a plug and play situation for that side.  IN SWIFT we have 7 options that show up in github search.  The first thing that comes to mind is apple's CommonCrypto, [CryptoKit](https://developer.apple.com/documentation/cryptokit), or [swift-crypto](https://github.com/apple/swift-crypto). Rats they don't have an Scrypt implementation, why not use [CryptoSwift](https://github.com/krzyzanowskim/CryptoSwift)?  Since that's the major crypto library I know of in Swift, and it's easily accessible through cocoapods and has been around since Swift's beginnings.  AND it has a [scrypt implementation](https://cryptoswift.io/).  This will be awesome just hook it up and test it out and I come to find that 3 hashes with an N value of 2^12 = 16384 took around 290+ seconds. Since we take time intervals of 5 minutes at a time and this was basically max CPU usage it was not a suitable situation to say the least.
+Scrypt has become a popular hashing function thanks to crypto currency.  "The scrypt algorithm was invented by Colin Percival as the cryptoprotection of the online service to keep the backup copies of UNIX-like OS. The working principle of the scrypt algorithm lies in the fact that it artificially complicates the selection of options to solve a cryptographic task by filling it with “noise”. This noise are randomly generated numbers to which the scrypt algorithm refers, increasing the work time."
 
-After reading the libraries readme there's a suggestion `It is recommended to enable Whole-Module Optimization to gain better performance. Non-optimized build results in significantly worse performance.` Okay Cool! There's a chance! And I was seeing significant speed enhancements.  The one issue that seems to come with this library has been around since [2015](https://github.com/krzyzanowskim/CryptoSwift/issues/30) Swift hasn't reached a point where it can come close to the speed of C libraries, and the speed enhancements only seemed to half.  Back to the drawing board.
+Java has this great implementation of Scrypt called [Bouncy Castle](https://www.bouncycastle.org/) so it was really a plug and play situation for that side.  Here's where things get super interesting on the Swift side.  IN SWIFT we have 7 options that show up in github search.  The first thing that comes to mind is apple's CommonCrypto, [CryptoKit](https://developer.apple.com/documentation/cryptokit), or [swift-crypto](https://github.com/apple/swift-crypto), but they don't have an Scrypt implementation. So why not use [CryptoSwift](https://github.com/krzyzanowskim/CryptoSwift)?  It's one of the most popular crypto library I know of in Swift, it's easily accessible through cocoapods, and has been around since Swift's beginnings.  Not to mention it has a [scrypt implementation](https://cryptoswift.io/)!  This will be awesome, just hook it up, test it out.  Done. 
 
-I noticed in the library search of github this repo called [swift-scrypt](https://github.com/greymass/swift-scrypt) a Swift Package Manager bridge between [libscrypt](https://github.com/technion/libscrypt) with swift bindings.  This was too good to be true!  I fired up XCode 11.4, used the awesome new SPM integrations and got everything working in a demo project.  Shout out to [jnordberg](https://github.com/jnordberg) for originally creating the repo.  
 
-So back to the SafePaths project, I scrapped everything and started over.  Pulled in this new swift package and got everything to build.  Implemented all the requirements and was storing them in a new List on the existing Realm Location object.  Fun fact, if you're adding a new property to an existing object in Realm you need to increase the schema Version and provide an empty migration block for it to do all it's magic.  Anywho, everything was working, storing information perfectly, retrieval worked, all the tests passed!
+## OH No You Don't
 
-It was time.
+I come to find that 3 hashes with an N value of 2^12 = 16384 took around 290+ seconds. Since we take time intervals of 5 minutes at a time and this slammed the phone CPU to max usage it was not a suitable situation to say the least.
 
-I submitted a new PR with all the newly added Native implementation.  Things were looking great! Thennnnnnnn the build machine told me it couldn't retrieve the SPM library AND therefore refused to compile.  BUT WHY!? It all worked on my machine!
+After reading the libraries Readme there revealed a suggestion `It is recommended to enable Whole-Module Optimization to gain better performance. Non-optimized build results in significantly worse performance.` Okay Cool! There's a chance! And I was seeing significant speed enhancements.  The one issue that seems to come with this library has been around since [2015](https://github.com/krzyzanowskim/CryptoSwift/issues/30) Swift hasn't reached a point where it can come close to the speed of C libraries, and the speed enhancements only seemed to half.  
 
-At this point I had my friend [Tin](https://github.com/tindn) pull down my code and try to run it on his machine.  Turns out he was unable to fetch the dependency as well. CURIOUS. Turns out we needed to degrade the swift-tools-version to 5.1 from 5.2, and thus a [fork was born](https://github.com/MichaelNeas/swift-scrypt).  Okay Tin can fetch the dependency, I can fetch the dependency, we both can build the app, okay lets update the PR!
+
+## What to do now?
+
+I went back to the library search on github and found a repo called [swift-scrypt](https://github.com/greymass/swift-scrypt) a Swift Package Managed bridge between [libscrypt](https://github.com/technion/libscrypt) with swift bindings.  This was too good to be true!  I fired up XCode 11.4, used the awesome new SPM integrations and got everything working in a demo project.  Shout out to [jnordberg](https://github.com/jnordberg) for originally creating the repo.  
+
+Back on the main project, I scrapped everything and started over.  I pulled in this new swift package and got everything to build.  Implemented all the requirements and was storing them in a new List on the existing Realm Location object.  Fun fact, if you're adding a new property to an existing object in Realm you need to increase the schema Version and provide an empty migration block for it to do all it's magic.  Any who, everything was working, storing information perfectly, retrieval worked, and all the tests passed!
+
+## It was time.
+
+I submitted a new PR with all the newly added Native implementation.  Things were looking great! 
+
+Thennnn the build machine told me it couldn't retrieve the SPM library AND therefore refused to compile.  BUT WHY!? It all worked on my machine!
+
+At this point I had my friend [Tin](https://github.com/tindn) pull down my code and try to run it on his machine.  Turns out he was unable to fetch the dependency as well. CURIOUS. Turns out we needed to degrade the swift-tools-version to 5.1 from 5.2, and thus a [fork was born](https://github.com/MichaelNeas/swift-scrypt).  Now Tin and I can both fetch the dependency, we both can build the app, okay lets update the PR!
 
 Build machine gets the change and would you look at that, it can also fetch the new dependency AND build the project!
 
-There was another hurdle coming barreling down.
+Little did I know, there was another hurdle coming barreling down.
 
-XCTEST
+## XCTEST
 
 I am a big fan of tests, and the safe paths project has a lot of build automization with github workflows, fastlane, and other cool tools to make sure new features and bug fixes and seemlessly integrate into the existing system.
 
@@ -73,9 +92,8 @@ So now that I knew how to get the project working with SPM and a clibrary i star
 
 ## UNTIL
 
-A BUILD CONFIGURATION [issue](https://forums.swift.org/t/cannot-using-spm-module-with-some-custom-configuration-not-debug-release-on-xcode-11/26412) arrives with using SPM in XCode 11 with different configurations.   At this point had to make a decision to hack in a weird solution to incorporate all the react native cocoapods for staging but yet maintain Debug/Release configuration for the SPM Scrypt project.  And it was at this moment I realized SPM was just not going to cut it.   I love SPM but it's just too new to throw into a project like this.  I removed all the integration and work done before and added in the libscrypt c library with a header pointing directly to C.  Kept a Swift wrapper around the library and everything worked as expected. 
-
+A BUILD CONFIGURATION [issue](https://forums.swift.org/t/cannot-using-spm-module-with-some-custom-configuration-not-debug-release-on-xcode-11/26412) arrives with using SPM in XCode 11 with different configurations.   At this point had to make a decision to hack in a weird solution to incorporate all the react native cocoapods for staging but yet maintain Debug/Release configuration for the SPM Scrypt project.  And it was at this moment I realized SPM was just not going to cut it.   I love SPM but it's just too new to throw into a project like this.  I removed all the integration and work done before and added in the libscrypt c library with a header pointing directly to C.  Kept a Swift wrapper around the library and everything worked as expected.
 
 ## In the end
 
-This project was super fun to work on and I learned a ton.  Though the struggle was real, getting everything hooked up and working properly, the feeling of seeing all working tests passing might be my favorite feeling in the whole world.  If you're interested in joining the development the open source repo can be found [here](https://github.com/Path-Check/covid-safe-paths)
+And to finish it all off we were able to later use a different React Native Background Geolocation library and upgrade the XCode version in the build pipeline.  Nevertheless, effort is never wasted, this project was enjoyable work on and I learned a ton.  Though the struggle was real, getting everything hooked up and working properly, the feeling of seeing all working tests passing might be my favorite feeling in the whole world.  If you're interested in joining the development the open source repo can be found [here](https://github.com/Path-Check/covid-safe-paths)

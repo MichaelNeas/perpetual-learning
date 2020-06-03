@@ -1,6 +1,6 @@
 ## 2020
 
-- [React Native + SPM + Cocoapods + XCode 11.3.1 + Covid = Oh my](./safe-paths)
+- [Adventures of Scrypt, A Journey with SPM](./safe-paths)
 - [Swift Generics](./generics)
 - [Universal Linking + Github Pages](./static-site-universal-links)
 
