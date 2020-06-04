@@ -56,21 +56,25 @@ Little did I know, there was another hurdle coming barreling down.
 
 ## XCTEST
 
-I am a big fan of tests, and the safe paths project has a lot of build automization with github workflows, fastlane, and other cool tools to make sure new features and bug fixes and seemlessly integrate into the existing system.
+Firstly, I am a big fan of tests and the safe paths project has a lot of build automation with github workflows, fastlane, and other modern tooling to ensure new features and bug fixes are seamlessly integrated into the existing system.
 
-Anyways, the build machine begins to compile the project in order to begin the Unit Tests.  And would you guess what happened?? `No such module 'libscrypt'`. 
+The build machine begins to compile the project in order to begin the Unit Tests.  And would you guess what happened?? `No such module 'libscrypt'`. 
 
-WHYYYY, the saving grace of libscrypt has turned against me in the Test Suite!
+**WHYYYY**, the saving grace of libscrypt has turned against me in the Test Suite on the remote machine!
 
-Everything was linked up and ran just fine in my version of XCode, surely this has to be a build machine issue.  Haha.
+Everything was linked up and ran just fine in my version of XCode, surely this has to be a build machine issue. Haha.
 
-I go scouring across the internet looking for a solution to my problem. I asked everyone i knew, and went to every slack channel i could find.  But no avail.
+I think long and hard, then go scouring across the internet looking for a solution to my problem. I asked everyone I knew, and went to every slack channel I could find.  No avail.
 
-I noticed that Tin and I had different XCode versions before with the swift-tools-version issue, maybe this was the root of my issue?  Jorge suggested I download the older version of XCode and try to reproduce the issue.  And would you guess, yep, libscrypt was unable to be found.  
+I noticed that Tin and I had different XCode versions before with the swift-tools-version issue, maybe this was the root of my issue?  A buddy Jorge suggested I download the older version of XCode and try to reproduce the issue.  And would you guess, libscrypt was unable to be found in XCode 11.3! 
 
-The weird part, if I went and changed ANY build setting the test target would successfully compile.  It is only upon closing XCode and reopening that I was made aware that it had no idea where the library was.  So from there I began changing up a whole plethora of XCode build settings.  I tried directly pointing to the modulemap file, changing up order of execution, copying over differences from the App target that may lead to the solution, but NOTHING.  I read through pages of issues on reddit, swift forums, stack overflow, github issues.  I was just about done with this problem.  Ready to give up and go back to an older way of using C files without using SPM but an explicit bridging header when I stumbled on this [wonderful issue](https://github.com/apple/swift-nio/issues/1128) on the swift-nio project.
+## The weird part
 
-[Ankit Aggarwal](https://github.com/aciidb0mb3r) is a founding father of Swift Package Manager, and he suggests `Add -Xcc -fmodule-map-file=$(PROJECT_TEMP_ROOT)/GeneratedModuleMaps/macosx/<missing module name>.modulemap to OTHER_SWIFT_FLAGS in the test target.` Which worked like a fricken charm in the demo project from earlier.  But was not beneficial to the safe paths project building the tests.  Scroll down, read more and BOOM [Jared Sinclair](https://github.com/jaredsinclair) ran in to the EXACT same issue as me.
+If I changed _ANY_ build setting the test target would successfully compile.  It was only upon closing XCode and reopening that I was made aware that the compiler had no idea where the library was.  From there I took off changing up a whole plethora of XCode build settings.  I tried directly pointing to the modulemap SPM file, changing up orders of execution, copying over differences from the App target, read through just about every setting, and **NOTHING**.  I read through pages of issues on reddit, swift forums, stack overflow, github issues.  I was just about done with this problem.  
+
+At this point I was ready to give up and go back to an older way of using C files without using SPM.  This would require an explicit bridging header and copying a whole mess of files.  Then I stumbled on this [wonderful issue](https://github.com/apple/swift-nio/issues/1128) on the swift-nio project.
+
+[Ankit Aggarwal](https://github.com/aciidb0mb3r) is a founding father of Swift Package Manager, and he suggested `Add -Xcc -fmodule-map-file=$(PROJECT_TEMP_ROOT)/GeneratedModuleMaps/macosx/<missing module name>.modulemap to OTHER_SWIFT_FLAGS in the test target.` Which worked like a fricken charm in the demo project from earlier.  However it was not beneficial to the safe paths project building the tests.  I scroll down further, reading more, and BOOM [Jared Sinclair](https://github.com/jaredsinclair) ran in to the EXACT same issue as me.
 
 ```
 I've run into this on several similar projects, with Swift Packages that contain clang submodules to expose code to the parent Swift module. I've found a workaround that fixes this, at least as of Xcode 11.3.1:
@@ -82,18 +86,20 @@ I've run into this on several similar projects, with Swift Packages that contain
 In all reproduced cases, the underlying error is a missing -fmodule-map-file flag for the clang submodule (MyLibrary.MySubmodule) emitted from the compile command for any file in the app target that has an import MyLibrary statement.
 ```
 
-I tried the first step only and the project BUILT!  But if we remember from before, the project always builds modifying the xcode settings.  So then I had to bring in the second step and would you know.  It actually worked!!! I jumped for joy, it all builds on my machine, sent up the PR and after a significant amount of time testing and building different targets things were looking great! 
+I tried the first step only and the project BUILT!  But if we remember from before, the project always builds modifying the xcode settings.  So then I had to bring in the second step. Would you guess, it actually worked!!! I jumped for joy! Everything builds on my machine, I quickly sent up the PR and after a significant amount of time testing and building different targets things were looking great! 
 
-Until I hit my final issue.
+## I Hit Another issue
 
-Seems like the unit tests for realm storage were throwing `EXC_BAD_ACCESS` when attempting to store anything in the DB.  Oh no, I cause a regression some how! Was it from adding the hash property?  Was this C library messing everything up some how?  It was all working before!
+Seems like the unit tests for realm storage were throwing `EXC_BAD_ACCESS` when attempting to store anything in the DB.  Oh no, I caused a regression some how! Was it from adding the hash property?  Was this C library messing everything up some how?  It was all working before!
 
-So now that I knew how to get the project working with SPM and a clibrary i started rebuilding the project off develop.  Testing the Realm tests every step of the way.  Nothing was breaking and I was slowly adding back all functionality.  It got time to add back the scrypt-swift project and I was nervous but ready for this thing to be completed.  I added it, and it all worked perfectly!  Then came time for the unit tests.  Now i was referencing a class somewhere else for a static time variable and that class became required to kick off the unit tests for my new functionality.  I clicked add to test target on the Realm Storage singleton and BOOOM the crash happened again! Seemed like the Test Realm instance and the singleton were getting mixed up during the testing.  So I pointed to a different static, removed the test membership, and we were off to the races again.
+So now that I knew how to get the project working with SPM and a c library I began rebuilding the project off develop.  Testing the Realm tests every step of the way.  Nothing was breaking and I was slowly adding back all functionality.  It got time to add back the scrypt-swift project and though I was nervous, I was more ready for this thing to be completed.  I added it, and it all worked perfectly!  Then came time for the unit tests.  Turns out I was referencing a class somewhere else in the project for a static time variable and that class became required to kick off the unit tests for my new functionality.  I added the Secure Storage file, which included the Realm Storage singleton, to the test target and BOOOM the crash happened again! Seemed like the Test Realm instance and the singleton were getting mixed up during the runtime phase of testing.  So I pointed to a different static, removed the files membership, and we were off to the races again.
 
 ## UNTIL
 
-A BUILD CONFIGURATION [issue](https://forums.swift.org/t/cannot-using-spm-module-with-some-custom-configuration-not-debug-release-on-xcode-11/26412) arrives with using SPM in XCode 11 with different configurations.   At this point had to make a decision to hack in a weird solution to incorporate all the react native cocoapods for staging but yet maintain Debug/Release configuration for the SPM Scrypt project.  And it was at this moment I realized SPM was just not going to cut it.   I love SPM but it's just too new to throw into a project like this.  I removed all the integration and work done before and added in the libscrypt c library with a header pointing directly to C.  Kept a Swift wrapper around the library and everything worked as expected.
+A BUILD CONFIGURATION [issue](https://forums.swift.org/t/cannot-using-spm-module-with-some-custom-configuration-not-debug-release-on-xcode-11/26412) arrives with using SPM in XCode 11 with different configurations.   At this point I had to make a decision to hack in a weird solution to incorporate all the react native cocoapods for staging but yet maintain Debug/Release configuration for the SPM Scrypt project.  And it was at this moment I realized SPM was just not going to cut it.   I love SPM but it's just too new to throw into a project like this.  I removed all the integration and work done before and added in the libscrypt c library with a header pointing directly to C.  Keeping a Swift wrapper around the library and everything worked as expected.  I posted the PR and all the build steps were able to kick off successfully.
 
 ## In the end
 
-And to finish it all off we were able to later use a different React Native Background Geolocation library and upgrade the XCode version in the build pipeline.  Nevertheless, effort is never wasted, this project was enjoyable work on and I learned a ton.  Though the struggle was real, getting everything hooked up and working properly, the feeling of seeing all working tests passing might be my favorite feeling in the whole world.  If you're interested in joining the development the open source repo can be found [here](https://github.com/Path-Check/covid-safe-paths)
+To finish it all off we were able to later use a different React Native Background Geolocation library and upgrade the XCode version in the build pipeline.  This will allow us to choose between reverting to having the JS side implement the hashing or bringing back SPM.
+
+Nevertheless, effort is never wasted, this project was enjoyable work on and I learned a ton.  I was able to work with some incredibly smart and talented individuals and even though the struggle was real I felt wicked accomplished seeing this project take off.  The feeling after getting everything hooked up, working properly, and seeing all green lights across the test suite might be my favorite feeling in the whole world.  If you're interested in development, the open source repo can be found [here](https://github.com/Path-Check/covid-safe-paths).  Hope this story brings a little insight to working with rapidly changing requirements and SPM integration.
