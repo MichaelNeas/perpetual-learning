@@ -2,6 +2,10 @@
 
 This is a story about the trials and tribulations of a feature request with regularly changing requirements, that ended up teaching me more than I could bargain for.  Hopefully any of this experience may be of assistance to others or an enjoyable read at the very least.
 
+```
+TL;DR: Swift needs a better Scrypt implementation, if you plan to use SPM to bridge a C library as a module make sure you have XCode 11.4+ installed.  Also at the time of writing this I hope SPM gets better support for configurations outside of debug and release.
+```
+
 ## The beginnings
 
 One day I received a message: "i've given Mike/Tambet no context so they probably have no idea what is gong on". Never has a sentiment ever been so spot on.  I come to find out that new open source React Native application was under construction with the goal to help out the world with understanding their potential exposure to the corona virus.  The app relied heavily on background geo location, there was little to no UI at the time and a few settings.  
