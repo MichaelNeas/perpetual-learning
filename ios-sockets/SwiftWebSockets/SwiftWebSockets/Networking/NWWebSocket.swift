@@ -141,6 +141,11 @@ open class NWWebSocket: WebSocketConnection {
     }
 
     func disconnect(closeCode: NWProtocolWebSocket.CloseCode = .protocolCode(.normalClosure)) {
+        let metadata = NWProtocolWebSocket.Metadata(opcode: .close)
+        metadata.closeCode = closeCode
+        let context = NWConnection.ContentContext(identifier: "textContext", metadata: [metadata])
+
+        send(data: nil, context: context)
         connectionDidEnd(closeCode: closeCode, reason: nil)
         pingTimer?.invalidate()
     }
