@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Network
 
 class Model: ObservableObject, WebSocketConnectionDelegate {
     @Published var messages = [Message]()
@@ -20,35 +21,39 @@ class Model: ObservableObject, WebSocketConnectionDelegate {
     
     func send(_ message: String){
         messages.append(Message(message: message, me: true))
-        socket?.send(text: message)
+        socket?.send(string: message)
     }
     
     // Delegates
-    func onConnected(connection: WebSocketConnection) {
+    func webSocketDidConnect(connection: WebSocketConnection) {
         print("connected")
     }
     
-    func onDisconnected(connection: WebSocketConnection, error: Error?) {
+    func webSocketDidDisconnect(connection: WebSocketConnection, closeCode: NWProtocolWebSocket.CloseCode, reason: Data?) {
         print("disconnected")
     }
     
-    func onError(connection: WebSocketConnection, error: Error) {
+    func webSocketDidReceiveError(connection: WebSocketConnection, error: Error) {
         print(error)
     }
     
-    func onMessage(connection: WebSocketConnection, text: String) {
-        if messages.last?.message != text {
+    func webSocketDidReceiveMessage(connection: WebSocketConnection, string: String) {
+        if messages.last?.message != string {
             DispatchQueue.main.async {
-                self.messages.append(Message(message: text, me: false))
+                self.messages.append(Message(message: string, me: false))
             }
         }
     }
     
-    func onMessage(connection: WebSocketConnection, data: Data) {
+    func webSocketDidReceiveMessage(connection: WebSocketConnection, data: Data) {
         if let message = String(data: data, encoding: .utf8), messages.last?.message != message {
             DispatchQueue.main.async {
                 self.messages.append(Message(message: message, me: false))
             }
         }
+    }
+
+    func webSocketDidReceivePong(connection: WebSocketConnection) {
+        print("received pong")
     }
 }
