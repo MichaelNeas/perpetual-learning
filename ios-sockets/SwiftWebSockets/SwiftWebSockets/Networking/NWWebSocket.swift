@@ -124,7 +124,7 @@ open class NWWebSocket: WebSocketConnection {
 
     func ping() {
         let metadata = NWProtocolWebSocket.Metadata(opcode: .ping)
-        metadata.setPongHandler(.main) { [weak self] error in
+        metadata.setPongHandler(connectionQueue) { [weak self] error in
             guard let self = self else {
                 return
             }
