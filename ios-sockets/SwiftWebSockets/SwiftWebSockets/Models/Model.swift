@@ -12,10 +12,10 @@ import Network
 class Model: ObservableObject, WebSocketConnectionDelegate {
     @Published var messages = [Message]()
     
-    var socket: NativeWebSocket?
+    var socket: NWWebSocket?
     
     init() {
-        socket = NativeWebSocket(url: URL(string: "ws://localhost:3000")!, autoConnect: true)
+        socket = NWWebSocket(url: URL(string: "ws://localhost:3000")!, connectAutomatically: true)
         socket?.delegate = self
     }
     
