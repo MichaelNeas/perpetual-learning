@@ -20,11 +20,12 @@ open class NWWebSocket: WebSocketConnection {
     private let connection: NWConnection
     private let endpoint: NWEndpoint
     private let parameters: NWParameters
+    private let connectionQueue: DispatchQueue
     private var pingTimer: Timer?
 
     // MARK: - Initialization
 
-    init(request: URLRequest, connectAutomatically: Bool = false) {
+    init(request: URLRequest, connectAutomatically: Bool = false, connectionQueue: DispatchQueue = .global(qos: .default)) {
 
         endpoint = .url(request.url!)
 
@@ -39,13 +40,14 @@ open class NWWebSocket: WebSocketConnection {
         parameters.defaultProtocolStack.applicationProtocols.insert(wsOptions, at: 0)
 
         connection = NWConnection(to: endpoint, using: parameters)
+        self.connectionQueue = connectionQueue
 
         if connectAutomatically {
             connect()
         }
     }
 
-    init(url: URL, connectAutomatically: Bool = false) {
+    init(url: URL, connectAutomatically: Bool = false, connectionQueue: DispatchQueue = .global(qos: .default)) {
 
         endpoint = .url(url)
 
@@ -60,6 +62,7 @@ open class NWWebSocket: WebSocketConnection {
         parameters.defaultProtocolStack.applicationProtocols.insert(wsOptions, at: 0)
 
         connection = NWConnection(to: endpoint, using: parameters)
+        self.connectionQueue = connectionQueue
 
         if connectAutomatically {
             connect()
@@ -71,7 +74,7 @@ open class NWWebSocket: WebSocketConnection {
     func connect() {
         connection.stateUpdateHandler = stateDidChange(to:)
         listen()
-        connection.start(queue: .main)
+        connection.start(queue: connectionQueue)
     }
 
     func send(string: String) {
