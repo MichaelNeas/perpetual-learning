@@ -29,7 +29,7 @@ open class NWWebSocket: WebSocketConnection {
 
         endpoint = .url(request.url!)
 
-        if request.url?.port == 80 {
+        if request.url?.scheme == "ws" {
             parameters = NWParameters.tcp
         } else {
             parameters = NWParameters.tls
@@ -51,7 +51,7 @@ open class NWWebSocket: WebSocketConnection {
 
         endpoint = .url(url)
 
-        if url.port == 80 {
+        if url.scheme == "ws" {
             parameters = NWParameters.tcp
         } else {
             parameters = NWParameters.tls
