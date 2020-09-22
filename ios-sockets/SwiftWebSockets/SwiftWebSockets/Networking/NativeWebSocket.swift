@@ -7,30 +7,50 @@
 //
 
 import Foundation
+import Network
 
-// define what WebSocketConnections can do
+/// Defines a websocket connection.
 protocol WebSocketConnection {
+    /// Connect to the websocket.
     func connect()
-    func send(text: String)
+
+    /// Send a UTF-8 formatted `String` over the websocket.
+    /// - Parameter string: The `String` that will be sent.
+    func send(string: String)
+
+    /// Send some `Data` over the websocket.
+    /// - Parameter data: The `Data` that will be sent.
     func send(data: Data)
+
+    /// Start listening for messages over the websocket.
     func listen()
-    func ping(with: TimeInterval)
-    func disconnect()
+
+    /// Ping the websocket periodically.
+    /// - Parameter interval: The `TimeInterval` (in seconds) with which to ping the server.
+    func ping(interval: TimeInterval)
+
+    /// Ping the websocket once.
+    func ping()
+
+    /// Disconnect from the websocket.
+    /// - Parameter closeCode: The code to use when closing the websocket connection.
+    func disconnect(closeCode: NWProtocolWebSocket.CloseCode)
+
     var delegate: WebSocketConnectionDelegate? { get set }
 }
 
-protocol WebSocketConnectionDelegate: class {
-    func onConnected(connection: WebSocketConnection)
-    func onDisconnected(connection: WebSocketConnection, error: Error?)
-    func onError(connection: WebSocketConnection, error: Error)
-    func onMessage(connection: WebSocketConnection, text: String)
-    func onMessage(connection: WebSocketConnection, data: Data)
+/// Defines a delegate for a websocket connection.
+protocol WebSocketConnectionDelegate: AnyObject {
+    func webSocketDidConnect(connection: WebSocketConnection)
+    func webSocketDidDisconnect(connection: WebSocketConnection,
+                                closeCode: NWProtocolWebSocket.CloseCode,
+                                reason: Data?)
+    func webSocketDidReceiveError(connection: WebSocketConnection, error: Error)
+    func webSocketDidReceivePong(connection: WebSocketConnection)
+    func webSocketDidReceiveMessage(connection: WebSocketConnection, string: String)
+    func webSocketDidReceiveMessage(connection: WebSocketConnection, data: Data)
 }
 
-extension WebSocketConnectionDelegate {
-    func onMessage(connection: WebSocketConnection, text: String) {}
-    func onMessage(connection: WebSocketConnection, data: Data) {}
-}
 
 class NativeWebSocket: NSObject, WebSocketConnection, URLSessionWebSocketDelegate {
     weak var delegate: WebSocketConnectionDelegate?
@@ -49,14 +69,12 @@ class NativeWebSocket: NSObject, WebSocketConnection, URLSessionWebSocketDelegat
     }
     
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
-        delegate?.onConnected(connection: self)
-//        DispatchQueue.main.async { [weak self] in
-//            self?.ping()
-//        }
+        delegate?.webSocketDidConnect(connection: self)
     }
     
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
-        delegate?.onDisconnected(connection: self, error: nil)
+        let nwCloseCode = try! NWProtocolWebSocket.CloseCode(rawValue: UInt16(closeCode.rawValue))
+        delegate?.webSocketDidDisconnect(connection: self, closeCode: nwCloseCode, reason: reason)
     }
     
     func connect() {
@@ -65,12 +83,12 @@ class NativeWebSocket: NSObject, WebSocketConnection, URLSessionWebSocketDelegat
         listen()
     }
     
-    func send(text: String) {
-        let textMessage = URLSessionWebSocketTask.Message.string(text)
+    func send(string: String) {
+        let textMessage = URLSessionWebSocketTask.Message.string(string)
         webSocketTask.send(textMessage) { [weak self] error in
             guard let self = self else { return }
             if let error = error {
-                self.delegate?.onError(connection: self, error: error)
+                self.delegate?.webSocketDidReceiveError(connection: self, error: error)
             }
         }
     }
@@ -80,7 +98,7 @@ class NativeWebSocket: NSObject, WebSocketConnection, URLSessionWebSocketDelegat
         webSocketTask.send(dataMessage) { [weak self] error in
             guard let self = self else { return }
             if let error = error {
-                self.delegate?.onError(connection: self, error: error)
+                self.delegate?.webSocketDidReceiveError(connection: self, error: error)
             }
         }
     }
@@ -91,13 +109,13 @@ class NativeWebSocket: NSObject, WebSocketConnection, URLSessionWebSocketDelegat
             guard let self = self else { return }
             switch result {
             case .failure(let error):
-                self.delegate?.onError(connection: self, error: error)
+                self.delegate?.webSocketDidReceiveError(connection: self, error: error)
             case .success(let message):
                 switch message {
                 case .string(let text):
-                    self.delegate?.onMessage(connection: self, text: text)
+                    self.delegate?.webSocketDidReceiveMessage(connection: self, string: text)
                 case .data(let data):
-                    self.delegate?.onMessage(connection: self, data: data)
+                    self.delegate?.webSocketDidReceiveMessage(connection: self, data: data)
                 @unknown default:
                     fatalError()
                 }
@@ -106,19 +124,33 @@ class NativeWebSocket: NSObject, WebSocketConnection, URLSessionWebSocketDelegat
         }
     }
     
-    func ping(with frequency: TimeInterval = 25.0) {
-        pingTimer = Timer.scheduledTimer(withTimeInterval: frequency, repeats: true) { [weak self] _ in
+    func ping(interval: TimeInterval = 25.0) {
+        pingTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
             guard let self = self else { return }
-            self.webSocketTask.sendPing { error in
-                if let error = error {
-                    self.delegate?.onError(connection: self, error: error)
-                }
+            self.ping()
+        }
+    }
+
+    func ping() {
+        self.webSocketTask.sendPing { error in
+            if let error = error {
+                self.delegate?.webSocketDidReceiveError(connection: self, error: error)
             }
         }
     }
     
-    func disconnect() {
-        webSocketTask.cancel(with: .normalClosure, reason: nil)
+    func disconnect(closeCode: NWProtocolWebSocket.CloseCode) {
+        var webSocketTaskCloseCode: URLSessionWebSocketTask.CloseCode!
+        switch closeCode {
+        case .protocolCode(let definedCode):
+            webSocketTaskCloseCode = URLSessionWebSocketTask.CloseCode(rawValue: Int(definedCode.rawValue))
+        case .applicationCode, .privateCode:
+            webSocketTaskCloseCode = .normalClosure
+        @unknown default:
+            fatalError()
+        }
+
+        webSocketTask.cancel(with: webSocketTaskCloseCode, reason: nil)
         pingTimer?.invalidate()
     }
 }
