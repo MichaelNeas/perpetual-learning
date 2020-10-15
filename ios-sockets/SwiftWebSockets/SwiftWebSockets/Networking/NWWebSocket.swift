@@ -25,29 +25,18 @@ open class NWWebSocket: WebSocketConnection {
 
     // MARK: - Initialization
 
-    init(request: URLRequest, connectAutomatically: Bool = false, connectionQueue: DispatchQueue = .global(qos: .default)) {
+    convenience init(request: URLRequest,
+                     connectAutomatically: Bool = false,
+                     connectionQueue: DispatchQueue = .main) {
 
-        endpoint = .url(request.url!)
-
-        if request.url?.scheme == "ws" {
-            parameters = NWParameters.tcp
-        } else {
-            parameters = NWParameters.tls
-        }
-
-        let wsOptions = NWProtocolWebSocket.Options()
-        wsOptions.autoReplyPing = true
-        parameters.defaultProtocolStack.applicationProtocols.insert(wsOptions, at: 0)
-
-        connection = NWConnection(to: endpoint, using: parameters)
-        self.connectionQueue = connectionQueue
-
-        if connectAutomatically {
-            connect()
-        }
+        self.init(url: request.url!,
+                  connectAutomatically: connectAutomatically,
+                  connectionQueue: connectionQueue)
     }
 
-    init(url: URL, connectAutomatically: Bool = false, connectionQueue: DispatchQueue = .global(qos: .default)) {
+    init(url: URL,
+         connectAutomatically: Bool = false,
+         connectionQueue: DispatchQueue = .main) {
 
         endpoint = .url(url)
 
