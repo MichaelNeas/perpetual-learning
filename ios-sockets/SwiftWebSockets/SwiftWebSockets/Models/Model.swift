@@ -8,6 +8,7 @@
 
 import Foundation
 import Network
+import NWWebSocket
 
 class Model: ObservableObject, WebSocketConnectionDelegate {
     @Published var messages = [Message]()
