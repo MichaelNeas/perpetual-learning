@@ -1,4 +1,4 @@
-# Anonymous First, Passwordless Second Firebase Authentication - October 11, 2020
+# Anonymous First, Passwordless Second Firebase Authentication - November 9, 2020
 
 In todays world we have SO many ways to provide users with a persistent, attributed, and social experiences.  Many apps implement some form of a user session perhaps with accounts and authentication.  Social logins are a standard and for good reasons.  It's nice to never have to worry about remembering a specific password for a different app and as a developer you don't need to worry about managing a user table and correctly handle passwords.  
 
@@ -6,22 +6,41 @@ HOWEVER, There appears to be a path of least resistance at play.  It seems like 
 
 Why force users to authenticate to an application before they even get a chance to try it out?
 
-Don't get me wrong, there's value in user attribution in applications.  It's cool to know who posted what and when.  If you need to store data related to users actions but you don't directly need the users information to deliver value to your application, why not go anonymous first?
+Don't get me wrong, there's value in user attribution in applications.  There are security and access permissions underlying having defined users.  It's cool to know who posted what and when.  If you need to store data related to users actions but you don't directly need the users information to deliver value to your application, why not go anonymous first?
 
-This post will leverage firebase authentication to demonstrate the concept of anonymous first, passwordless authentication.  I will aim to target 2 powerful features firebase provides developers Anonymous Users and Passwordless Authentication. They can be mutually exclusive, but together they work quite nice.
+This post aims will leverage firebase authentication to demonstrate the concept of anonymous first, passwordless authentication.  I will aim to target 2 powerful features firebase provides developers Anonymous Users and Passwordless Authentication. They can be mutually exclusive, but together they work quite nice.
+
+To my knowledge this flow should be adaptable for any Firebase driven [client application](https://firebase.google.com/docs/firestore/client/libraries).
+
+Setting up your firebase app with anonymous users is nicely outlined in [Firebase documentation](https://firebase.google.com/docs/auth) under your specific platform's Anonymous Authentication tab.
 
 ## Anonymous Users
 
 Anonymous users don't expire, and there isn't currently any automated way to purge them.
 
-Treat an anonymous account just like any other authenticated account, it's just not linked with a social provider and you don't have any specific user information like email off the start.  Each anonymous user has their own UID and that can be linked accordingly.
+Treat an anonymous account just like any other authenticated account, they're just not linked with a social provider and you don't have any specific user information like email off the start.  Each anonymous user has their own UID and that can be linked accordingly.
 
 ## The Flow
 ![Diagram](./resources/anonymousUsers.png)
 
-When a user signs out of an authenticated user make the choice to save some data or completely wipe local data when returning them back to an anonymous state.
+As soon as your app launches configure your firebase app and check to see if there is a current user session by supplying the [authentication state listener](https://firebase.google.com/docs/auth/ios/start#listen_for_authentication_state).
+
+### No User
+If there is no user session now we have to create an anonymous user!
+
+### Anonymous User
+If there is a user then Firebase Users have a property [isAnonymous](https://firebase.google.com/docs/reference/android/com/google/firebase/auth/FirebaseUser#isAnonymous()) which will be able to tell you if that user is anonymous.
 
 Add in some example code for how to handle migrations
+
+### Authed User
+Otherwise we have an authed user and we can bypass everything.
+
+### Signing out
+
+When a user signs out of an authenticated user make the choice to save some data or completely wipe local data when returning them back to an anonymous state.
+
+### Common Error states
 
 Handle common error states, maybe show what those error states are
 
@@ -34,6 +53,8 @@ Once a user is ready to take their account to the next level and link an email a
 ## That's it
 
 We can give our users a delightful persistent experience without requiring them to explicitly authenticate to our application.  If they want to later down the line, that's great and we'll persist all their data as they link authentication providers.  But I'll tell you one thing.  It is nice to open an app, try it out and not be pressured into giving away unnecessary information about myself right off the bat.
+
+I talk about this flow with experience from Firebase.  If Firebase is not your cup of tea or your project does not use Firebase.  You can still use similar principles and flow pattern to deliver a pleasant user experience to your applications.
 
 ## References
 - [Anonymous Users on iOS Firebase Documentation](https://firebase.google.com/docs/auth/ios/anonymous-auth)
