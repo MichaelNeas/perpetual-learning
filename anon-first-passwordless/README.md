@@ -1,38 +1,45 @@
 # Anonymous First, Passwordless Second Firebase Authentication - November 9, 2020
 
-In todays world we have SO many ways to provide users with a persistent, attributed, and social experiences.  Many apps implement some form of a user session perhaps with accounts and authentication.  Social logins are a standard and for good reasons.  It's nice to never have to worry about remembering a specific password for a different app and as a developer you don't need to worry about managing a user table and correctly handle passwords.  
+We have so many ways to provide users with a persistent, attributed, and social experiences.  Many apps implement some form of a user session perhaps with accounts and authentication.  Social logins have become more or less a standard.  As a user I don't need to worry about maintaining a specific password for many of my apps and as a developer I don't need to worry about managing a user table and correctly handle passwords.
 
-HOWEVER, There appears to be a path of least resistance at play.  It seems like every app I download presents me with this google, facebook, or apple "authentication wall" before I'm even allowed to use the application downloaded.  
+However, it seems like every app I download presents me with this social based "authentication wall" before I'm even allowed to use the application. 
 
-Why force users to authenticate to an application before they even get a chance to try it out?
+Why force authentication to an application before anyone even gets a chance to try it out?
 
-Don't get me wrong, there's value in user attribution in applications.  There are security and access permissions underlying having defined users.  It's cool to know who posted what and when.  If you need to store data related to users actions but you don't directly need the users information to deliver value to your application, why not go anonymous first?
+Don't get me wrong, there is value in user attribution in applications.  
+- There are security and access permissions by having defined users and roles within a system.
+- It's cool to know who posted what and when.
+- We can gain more users by targeting contacts lists.
+- And we all love receiving those marketing emails to keep us engaged.
+- Who's data will we sell? _(joking, kind of)_
+
+If you need to store data related to specific user actions but don't directly need personal user information to deliver value to your application, why try an anonymous first flow?
 
 This post leverages Firebase to demonstrate the concept of anonymous first, passwordless authentication.  I will aim to target 2 powerful features that empower developers to integrate Anonymous Users and Passwordless Authentication. They can be mutually exclusive, but together they work quite nicely.
 
-To my knowledge this flow should be adaptable for any Firebase driven [client application](https://firebase.google.com/docs/firestore/client/libraries) and could be expanded on for an authentication flow for a wide variety of applications.
+Though this post will have iOS specific undertones, this flow should be adaptable for any Firebase driven [client application](https://firebase.google.com/docs/firestore/client/libraries) and could be expanded upon as an authentication flow for a wide variety of applications.
 
 Setting up a firebase application with anonymous users is outlined in [Firebase documentation](https://firebase.google.com/docs/auth) under your specific platform's Anonymous Authentication tab.  Once the SDK is installed and configured to your firebase instance you're ready to begin the flow.
 
-Now here's my experience.
-
 ## About Anonymous Users
 
-Treat an anonymous account just like any other authenticated account, they're just not linked with a social provider and you don't have any specific user information like email off the start.  Each anonymous user has their own UID and that can be linked accordingly.
+Treat an anonymous account just like any other authenticated account, they're just not linked with a social provider and you don't have any specific user information like email off the start of the users life.  Each anonymous user has their own UID and that can be linked accordingly.
 
-This concept allows us to give users experiences tailored to their active sessions, persisted to a backend and allow an opt in approach.
+This concept allows us to give user experiences tailored to active sessions, persisted to a backend, and allow a less evasive, opt in approach to authentication.
 
-It's important to remember that Anonymous users don't expire, and there isn't currently any automated way to remove them.  This brings up the importance of correctly linking and removing anonymous users during the time when users opt in to explicit authentication.
+It's important to remember that Anonymous users don't expire and there isn't currently any automated way to remove them.  This brings up the importance of correctly linking and removing anonymous users during the time when users opt in to explicit authentication.
 
 ## The Flow
 
-![Diagram](./resources/anonymousUsers.png)
+<p align="center">
+  <img src="./resources/anonymousUsers.png" />
+</p>
 
-As soon as your app launches configure your firebase app and check to see if there is a current user session by supplying the [authentication state listener](https://firebase.google.com/docs/auth/ios/start#listen_for_authentication_state).  By assigning the `addStateDidChangeListener` you will receive updates on the active user.  In iOS world, if the User object comes back nil we can go ahead and proceed to the first step below.
+As soon as the application launches configure the firebase app and check to see if there is a current user session by supplying the [authentication state listener](https://firebase.google.com/docs/auth/ios/start#listen_for_authentication_state).  By assigning the `addStateDidChangeListener` we can receive updates on the active user.  In iOS world, if the User object comes back nil we can go ahead and proceed to the **No User** case below.
 
 ### No User
 
-If there is no user session now we have to create an anonymous user! The Authentication package from firebase allows us to make a single call `signInAnonymously()` and we are off and running with an anonymous user.
+If there is no user session we have to create an anonymous user! The Authentication package from firebase allows us to make a single call `signInAnonymously()` and we are off and running with an anonymous user.
 
 ### Anonymous User
 
