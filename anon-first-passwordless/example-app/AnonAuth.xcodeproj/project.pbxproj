@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6809E38F2569CA1700275095 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 6809E38E2569CA1700275095 /* README.md */; };
 		682FC1032558C16400A78BCE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 682FC1022558C16400A78BCE /* GoogleService-Info.plist */; };
 		685CD64824B53B1000229253 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 685CD64724B53B1000229253 /* AppDelegate.swift */; };
 		685CD64A24B53B1000229253 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 685CD64924B53B1000229253 /* SceneDelegate.swift */; };
@@ -19,6 +20,7 @@
 
 /* Begin PBXFileReference section */
 		165F5C1F89C715CF543898EF /* Pods-AnonAuth.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnonAuth.release.xcconfig"; path = "Target Support Files/Pods-AnonAuth/Pods-AnonAuth.release.xcconfig"; sourceTree = "<group>"; };
+		6809E38E2569CA1700275095 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../../README.md; sourceTree = "<group>"; };
 		682FC1022558C16400A78BCE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		685CD64424B53B1000229253 /* AnonAuth.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AnonAuth.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		685CD64724B53B1000229253 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 		685CD64624B53B1000229253 /* AnonAuth */ = {
 			isa = PBXGroup;
 			children = (
+				6809E38E2569CA1700275095 /* README.md */,
 				682FC1022558C16400A78BCE /* GoogleService-Info.plist */,
 				685CD64724B53B1000229253 /* AppDelegate.swift */,
 				685CD64924B53B1000229253 /* SceneDelegate.swift */,
@@ -164,6 +167,7 @@
 			files = (
 				685CD65424B53B1900229253 /* LaunchScreen.storyboard in Resources */,
 				682FC1032558C16400A78BCE /* GoogleService-Info.plist in Resources */,
+				6809E38F2569CA1700275095 /* README.md in Resources */,
 				685CD65124B53B1900229253 /* Preview Assets.xcassets in Resources */,
 				685CD64E24B53B1900229253 /* Assets.xcassets in Resources */,
 			);
@@ -359,7 +363,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"AnonAuth/Preview Content\"";
-				DEVELOPMENT_TEAM = 487YN8HM39;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = AnonAuth/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -380,7 +384,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"AnonAuth/Preview Content\"";
-				DEVELOPMENT_TEAM = 487YN8HM39;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = AnonAuth/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

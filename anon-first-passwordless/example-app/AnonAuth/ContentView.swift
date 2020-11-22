@@ -16,7 +16,9 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            Text("Testin out anonymous users")
+            Text("Firebase Anonymous First, Email Link Second")
+                .bold()
+            Spacer()
             if Auth.auth().currentUser != nil && Auth.auth().currentUser?.isAnonymous == false {
                 Button(action: {
                     do {
@@ -47,7 +49,8 @@ struct ContentView: View {
                     }
                 }
             }
-        }
+            Spacer()
+        }.padding()
     }
     
     func showMessagePrompt(_ message: String) {
@@ -65,13 +68,13 @@ struct ContentView: View {
                         let authError = error as NSError
                         if authError.code == AuthErrorCode.emailAlreadyInUse.rawValue {
                             let prevUser = Auth.auth().currentUser
-                            print("previous user: \(prevUser?.uid)")
+                            print("previous user: \(String(describing: prevUser?.uid))")
                             // try to sign in with credentials
                             Auth.auth().signIn(with: credential, completion: { (authResult, error) in
                                 if error == nil {
-                                    print("replace all data from \(prevUser?.uid) with \(Auth.auth().currentUser?.uid)")
+                                    print("replace all data from \(String(describing: prevUser?.uid)) with \(String(describing: Auth.auth().currentUser?.uid))")
                                     prevUser?.delete(completion: { err in
-                                        print("error deleting user: \(err)")
+                                        print("error deleting user: \(String(describing: err))")
                                     })
                                     print("retrieve all data")
                                 } else if let error = error {
@@ -80,14 +83,14 @@ struct ContentView: View {
                                         print("Wrong password")
                                     }
                                 } else {
-                                    print("error signing in with creds: \(error)")
+                                    print("error signing in with creds: \(String(describing: error))")
                                 }
                             })
                         } else {
                             print(authError)
                         }
                     } else {
-                        print("successfully authed and linked: \(authResult)")
+                        print("successfully authed and linked: \(String(describing: authResult))")
                     }
                 })
             } else {
