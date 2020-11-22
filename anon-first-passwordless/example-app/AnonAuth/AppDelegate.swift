@@ -12,27 +12,20 @@ import Firebase
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // TODO: Set up your own GoogleService-Info.plist and place it in the anon auth directory
         // Override point for customization after application launch.
         FirebaseApp.configure()
-        /// preliminary check
-        if Auth.auth().currentUser != nil {
-            // User is signed in.
-            print("User signed in")
-            Auth.auth().currentUser?.isAnonymous
-        } else {
-            // No user is signed in.
-            print("NO User signed in")
-            // check if in intermediary state
-            var handle = Auth.auth().addStateDidChangeListener { (auth, user) in
-                if user == nil {
-                    print("Signing in anonymously")
-                    Auth.auth().signInAnonymously { (authResult, error) in
-                        guard let user = authResult?.user else { return }
-                        let isAnonymous = user.isAnonymous  // true
-                        let uid = user.uid
-                        //self.vm.login(user: Auth.auth().currentUser)
-                        print(uid)
-                    }
+        /// preliminary check will fire whenever authentication state changes
+        Auth.auth().addStateDidChangeListener { (auth, user) in
+            if let user = user {
+                print("Current user signed in is \(user.uid)")
+                print("Current user is anonymous? \(user.isAnonymous)")
+            } else {
+                print("Signing in anonymously")
+                Auth.auth().signInAnonymously { (authResult, error) in
+                    guard let user = authResult?.user else { return }
+                    print("Anonymous? \(user.isAnonymous)")
+                    print("UID: \(user.uid)")
                 }
             }
         }
