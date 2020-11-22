@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  AnonAuth
 //
-//  Created by Michael Neas on 7/7/20.
+//  Created by Michael Neas on 11/22/20.
 //  Copyright © 2020 neas.lease.anonauth. All rights reserved.
 //
 
