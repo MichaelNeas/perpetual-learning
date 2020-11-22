@@ -1,14 +1,16 @@
 # Anonymous First, Passwordless Second Firebase Authentication - November 23, 2020
 
+Delivering delightful and persistent experiences without requiring immediate authentication is a pleasant shift in todays world of applications.  It is empowering to allow someone the freedom to try out an application before they sign up for everything that authentication mechanisms enable behind the scenes. This post explores one alternative solution to the authentication experience.
+
 ## Before Diving In
 
 This post leverages Firebase to demonstrate the concept of anonymous first, passwordless authentication.  I will aim to target 2 powerful features that empower developers to integrate Anonymous Users and Passwordless Authentication. They can be used exclusively, but together they work quite nicely.
 
 Even though this post carries iOS specific undertones, the underlining flow is adaptable for any Firebase driven [client application](https://firebase.google.com/docs/firestore/client/libraries) and can be extended as a general authentication practice for a wide variety of applications not backed by Firebase.
 
-## Premise
+## Motivation
 
-There are many ways to provide application users with persistent, attributed, and social experiences.  Many applications implement some form of a user session, perhaps with accounts and authentication.  Social logins have become more or less a standard and for good reasons.  As a user I don't need to worry about maintaining a specific password for many of my apps and as a developer I don't need to worry about managing a user table and correctly handling passwords.
+There are many ways to provide application users with persistent, attributed, and social experiences.  Many applications implement some form of a user session, perhaps with accounts and authentication.  Social media logins have become more or less a standard and for good reasons.  As a user I don't need to worry about maintaining a specific password for many of my apps and as a developer I don't need to worry about managing a user table and correctly handling passwords.
 
 There is even more value in user association in applications.  
 - There are security and access permissions by having defined users and roles within a system.
@@ -20,7 +22,7 @@ There is even more value in user association in applications.
 
 However, it feels like most applications I download present me with a social based "authentication wall" before I am even allowed to play around. 
 
-This brings up the question.  Why do we force authentication before giving people the chance to get a feel for their newly downloaded application?
+This brings up the question; why do we force authentication before giving people the chance to get a feel for their newly downloaded application?
 
 It is worth thinking about what user data an application truly needs.
 - Does it need to store data related to specific user actions?
@@ -47,7 +49,7 @@ Treat an anonymous account just like any other authenticated account, they're ju
 
 This concept allows us to give user experiences tailored to their active sessions, persisted to a backend, and permit a less invasive, opt-in approach for authentication.
 
-A caveat: Firebase Anonymous users don't expire and there isn't currently any automated way to remove them.  This brings up the importance of correctly linking and removing anonymous users during the time when users opt in to explicit authentication or sign out.
+A caveat: Firebase Anonymous users don't expire and there isn't currently any automated way to remove them.  This brings up the importance of correctly linking and removing anonymous users during the time when users opt in to explicit authentication or when they sign out.
 
 ## The Flow
 
@@ -111,8 +113,6 @@ It is a nice clean up step to remove the previous anonymous user at this step, a
 Signing out of an anonymous user is not an option I would personally suggest presenting to a user unless you inform them that it will "reset" them.
 
 ## That's it
-
-We can give users a delightful persistent experience without requiring explicit authentication to our applications.  If they want to later down the line, that's great, and we'll persist all their data as they link different authentication providers.  But I'll tell you one thing.  It sure is nice to open an app, try it out and not be pressured into giving away unnecessary information about myself right off the bat.
 
 Anonymous First, Passwordless authentication may not be the correct solution for your application.  Keeping this option in the back of our toolbox can potentially improve user adoption and increase awareness for something that has taken time and energy to create.
 
