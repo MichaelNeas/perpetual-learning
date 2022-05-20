@@ -52,14 +52,14 @@ class SwiftWebSocketServer {
         
         connection.start()
         
-        connection.didStopCallback = { err in
+        connection.didStopCallback = { [weak self] err in
             if let err = err {
                 print(err)
             }
-            self.connectionDidStop(connection)
+            self?.connectionDidStop(connection)
         }
-        connection.didReceive = { data in
-            self.connectionsByID.values.forEach { connection in
+        connection.didReceive = { [weak self] data in
+            self?.connectionsByID.values.forEach { connection in
                 print("sent \(String(data: data, encoding: .utf8) ?? "NOTHING") to open connection \(connection.id)")
                 connection.send(data: data)
             }
@@ -125,14 +125,14 @@ class ServerConnection {
     }
 
     private func setupReceive() {
-        connection.receiveMessage() { (data, context, isComplete, error) in
+        connection.receiveMessage() { [weak self] (data, context, isComplete, error) in
             if let data = data, let context = context, !data.isEmpty {
-                self.handleMessage(data: data, context: context)
+                self?.handleMessage(data: data, context: context)
             }
             if let error = error {
-                self.connectionDidFail(error: error)
+                self?.connectionDidFail(error: error)
             } else {
-                self.setupReceive()
+                self?.setupReceive()
             }
         }
     }
@@ -145,7 +145,8 @@ class ServerConnection {
     func send(data: Data) {
         let metaData = NWProtocolWebSocket.Metadata(opcode: .binary)
         let context = NWConnection.ContentContext (identifier: "context", metadata: [metaData])
-        self.connection.send(content: data, contentContext: context, isComplete: true, completion: .contentProcessed( { error in
+        connection.send(content: data, contentContext: context, isComplete: true, completion: .contentProcessed( { [weak self] error in
+            guard let self = self else { return }
             if let error = error {
                 self.connectionDidFail(error: error)
                 return
@@ -175,5 +176,6 @@ class ServerConnection {
             self.didStopCallback = nil
             didStopCallback(error)
         }
+        didReceive = nil
     }
 }
